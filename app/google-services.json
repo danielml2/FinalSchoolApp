@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "465360488405",
+    "firebase_url": "https://schooltests-debug-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "schooltests-debug",
+    "storage_bucket": "schooltests-debug.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465360488405:android:d1a6dc991fe43439c09f5c",
+        "android_client_info": {
+          "package_name": "me.danielml.finalschoolapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "465360488405-d2qnbr9iqqmpbdu03n9sunv9h5r2upjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYLyHfyk4Dfd_uz1eVEwxydHw9bXjTXZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "465360488405-d2qnbr9iqqmpbdu03n9sunv9h5r2upjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
