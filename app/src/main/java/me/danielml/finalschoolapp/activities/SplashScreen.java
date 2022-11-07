@@ -9,19 +9,24 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
+import me.danielml.finalschoolapp.objects.Test;
 
 @SuppressLint("CustomSplashScreen")
-// I know this isn't the correct way to do custom splash screens, and that there's a built in feature for it, but that's what my CS teacher accepts.
-// So it will be this way, even with the delay being completely irrelevant.
 public class SplashScreen extends AppCompatActivity {
 
     private int dotsCount = 0;
-    private FirebaseManager manager;
+    private FirebaseManager dbManager;
+    private Intent mainScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +34,10 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         TextView loadingText = findViewById(R.id.loadingText);
-        manager = new FirebaseManager();
+        dbManager = new FirebaseManager();
+        mainScreen = new Intent(this, MainActivity.class);
 
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        },3000);
+
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -48,10 +50,36 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 0, 250);
 
-        manager.isOutOfDate(System.currentTimeMillis(), (outOfDate) -> System.out.println("Tests are out of date: " + outOfDate));
-        manager.getCurrentTests((tests) -> {
-            tests.forEach(test -> Log.d("FirebaseManager", "Loaded test: " + test));
+
+        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
+        dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
+            try {
+               long localLastUpdate = fileManager.getLocalLastUpdated();
+               if(localLastUpdate < lastUpdatedDB) {
+                   Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
+                   dbManager.getCurrentTests((tests) -> {
+                       Log.d("SchoolTests Sync", "Downloaded database data, new tests count: " + tests.size());
+                       try {
+                           Log.d("SchoolTests Sync", "Saving database data locally...");
+                           fileManager.saveDBDataLocally(lastUpdatedDB, tests);
+                           Log.d("SchoolTests Sync", "Saved database data locally!");
+                       } catch (JSONException | IOException e) {
+                           Log.e("SchoolTests Sync", "Failed saving local data! Data is not up to date!");
+                           e.printStackTrace();
+                       }
+                       startActivity(mainScreen);
+                   });
+               } else {
+                   Log.d("SchoolTests Sync", "Local data is up to date!");
+                   startActivity(mainScreen);
+               }
+            } catch (IOException | JSONException e) {
+                Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
+                e.printStackTrace();
+                finish();
+            }
         });
+
     }
 
     public String addDots(int dotsAmount) {

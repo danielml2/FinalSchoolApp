@@ -1,6 +1,10 @@
 package me.danielml.finalschoolapp.objects;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +90,28 @@ public class Test {
     @Override
     public String toString() {
         return "(Grade " + gradeNum + "): " + subject + " " + type + " at " + getDateFormatted() + " for " + classNums;
+    }
+
+    public JSONObject toJSON()  {
+        try {
+            return new JSONObject()
+                     .put("dueDate", dueDate)
+                     .put("gradeNum", gradeNum)
+                     .put("subject", subject.name())
+                     .put("testType", type.name())
+                     .put("classNums", classNumsJSON())
+                     .put("manuallyCreated", manuallyCreated)
+                     .put("creationText", creationText);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public JSONArray classNumsJSON() {
+        JSONArray array = new JSONArray();
+        classNums.forEach(array::put);
+        return array;
     }
 
 }
