@@ -8,21 +8,20 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="199dp"
-        android:layout_height="43dp"
+        android:layout_width="175dp"
+        android:layout_height="46dp"
         android:text="SchoolTests"
         android:textAlignment="center"
         android:textSize="30dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.452"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.082" />
+        app:layout_constraintVertical_bias="0.087" />
 
     <TextView
-        android:id="@+id/lastUpdated"
+        android:id="@+id/lastUpdatedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Last updated at:"
@@ -45,7 +44,7 @@
         app:layout_constraintVertical_bias="0.8">
 
         <LinearLayout
-            android:id="@+id/testslist"
+            android:id="@+id/testsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
