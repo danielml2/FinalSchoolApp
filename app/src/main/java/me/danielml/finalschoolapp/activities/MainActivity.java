@@ -2,17 +2,16 @@ package me.danielml.finalschoolapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.json.JSONException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import me.danielml.finalschoolapp.R;
@@ -43,12 +42,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        tests.sort((test1, test2) -> {
+            if(test1.getDueDate() == test2.getDueDate())
+                return 0;
+            else
+                return test1.getDueDate() < test2.getDueDate() ? -1 : 1;
+        });
         testsView = findViewById(R.id.testsView);
-        for(int i = 0; i < tests.size(); i++) {
-            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.test_layout, testsView);
-        }
+        tests.forEach(test -> testsView.addView(buildView(test)));
 
 
 
+    }
+
+    public View buildView(Test test) {
+        LinearLayout parentLayout = new LinearLayout(this);
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflater.inflate(R.layout.test_layout, parentLayout);
+
+
+        TextView titleView = v.findViewById(R.id.testTitleTV);
+        TextView detailsView = v.findViewById(R.id.testDetailsTV);
+        TextView dateView = v.findViewById(R.id.dateTV);
+
+        titleView.setText("(Grade " + test.getGradeNum() + "): " + test.getSubject() + " " + test.getType());
+        detailsView.setText("For classes: " + test.getClassNums().toString());
+        dateView.setText("at: " + test.getDateFormatted());
+
+
+
+        return parentLayout;
     }
 }
