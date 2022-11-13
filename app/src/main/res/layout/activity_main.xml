@@ -22,15 +22,15 @@
 
     <TextView
         android:id="@+id/lastUpdatedText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Last updated at:"
+        android:layout_width="347dp"
+        android:layout_height="24dp"
+        android:text="עודכן לאחרונה ב"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.212"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.165" />
+        app:layout_constraintVertical_bias="0.162" />
 
     <ScrollView
         android:id="@+id/scrollView"
