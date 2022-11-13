@@ -79,13 +79,44 @@ public class MainActivity extends AppCompatActivity {
         TextView titleView = v.findViewById(R.id.testTitleTV);
         TextView detailsView = v.findViewById(R.id.testDetailsTV);
         TextView dateView = v.findViewById(R.id.dateTV);
+        TextView creationText = v.findViewById(R.id.creationTextTV);
+        Button reportBtn = v.findViewById(R.id.reportBtn);
 
-        titleView.setText("(Grade " + test.getGradeNum() + "): " + test.getSubject() + " " + test.getType());
-        detailsView.setText("For classes: " + test.getClassNums().toString());
-        dateView.setText("at: " + test.getDateFormatted());
+        String classNumsText = test.getClassNums().toString()
+                .replace("[", "")
+                 .replace("]","")
+                .replace("-1","שכבתי");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.forLanguageTag("he-IL"));
+        String dateFormatted = dateFormat.format(test.asDate());
+        dateFormatted = dateFormatted.substring(0, dateFormatted.length()-4);
 
+        titleView.setText("שכבה " + getGradeName(test.getGradeNum()) + " " + test.getType().getName() + " " + test.getSubject().getDefaultName());
+        detailsView.setText("לכיתות: " + classNumsText);
+        dateView.setText(dateFormatted);
+        creationText.setText(test.getCreationText());
 
+        reportBtn.setOnClickListener((view) -> {
+
+        });
 
         return parentLayout;
+    }
+
+    public String getGradeName(int gradeNum) {
+        switch(gradeNum) {
+            case 7:
+                return "ז'";
+            case 8:
+                return "ח'";
+            case 9:
+                return "ט'";
+            case 10:
+                return "י'";
+            case 11:
+                return "יא'";
+            case 12:
+                return "יב'";
+        }
+        return "";
     }
 }
