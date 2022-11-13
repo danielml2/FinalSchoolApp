@@ -9,7 +9,7 @@
     tools:context=".activities.ReportActivity">
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/staticTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Incorrect Detection Report"
@@ -43,10 +43,10 @@
         android:textColor="#F6F3F3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.414"
+        app:layout_constraintHorizontal_bias="0.452"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.179" />
+        app:layout_constraintVertical_bias="0.165" />
 
     <Spinner
         android:id="@+id/issueTypeSelect"
@@ -58,10 +58,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.333" />
+        app:layout_constraintVertical_bias="0.391" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine2"
+        android:id="@+id/issueDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#FBFBFB"
@@ -74,5 +74,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.47" />
+
+    <LinearLayout
+        android:id="@+id/reportedTestView"
+        android:layout_width="332dp"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.242">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

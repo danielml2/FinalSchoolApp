@@ -3,6 +3,7 @@ package me.danielml.finalschoolapp.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,16 +64,11 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-
-
-
-
     }
 
     public View buildView(Test test) {
         LinearLayout parentLayout = new LinearLayout(this);
-        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = inflater.inflate(R.layout.test_layout, parentLayout);
 
 
@@ -96,7 +92,10 @@ public class MainActivity extends AppCompatActivity {
         creationText.setText(test.getCreationText());
 
         reportBtn.setOnClickListener((view) -> {
+            Intent intent = new Intent(this, ReportActivity.class);
+            intent.putExtra("reportedTest", test);
 
+            startActivity(intent);
         });
 
         return parentLayout;
