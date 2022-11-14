@@ -2,11 +2,19 @@ package me.danielml.finalschoolapp.managers;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import me.danielml.finalschoolapp.objects.Subject;
@@ -16,9 +24,13 @@ import me.danielml.finalschoolapp.objects.TestType;
 public class FirebaseManager {
 
     private final FirebaseDatabase database;
+    private final FirebaseFirestore firestore;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
+
 
     public FirebaseManager() {
         this.database = FirebaseDatabase.getInstance();
+        this.firestore = FirebaseFirestore.getInstance();
     }
 
     public void getLastUpdatedTime(Consumer<Long> callback) {
@@ -72,5 +84,34 @@ public class FirebaseManager {
                 testCallback.accept(tests);
             }
         });
+    }
+
+    public void addReport(Test test, String issueType, String issueDetails, Consumer<DocumentState> stateManager) {
+
+        HashMap<String, Object> reportData = new HashMap<>();
+        reportData.put("testID", getDatabaseIdFromTest(test));
+        reportData.put("issueType", issueType);
+        reportData.put("issueDetails", issueDetails);
+        reportData.put("timestamp", new Date().getTime());
+        reportData.put("grade", test.getGradeNum());
+
+        firestore
+                .collection("reports")
+                .document()
+                .set(reportData)
+                .addOnSuccessListener(nothing -> {
+                    Log.d("FirebaseManager", "Successfully added the report to the database!");
+                    stateManager.accept(DocumentState.FINISHED);
+                })
+                .addOnFailureListener(exception -> {
+                    Log.e("FirebaseManager", "Failed to add report to database, caused by: " + exception.getCause());
+                    exception.printStackTrace();
+                    stateManager.accept(DocumentState.FAILED);
+                });
+        stateManager.accept(DocumentState.STARTED);
+    }
+
+    private String getDatabaseIdFromTest(Test test) {
+        return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate());
     }
 }
