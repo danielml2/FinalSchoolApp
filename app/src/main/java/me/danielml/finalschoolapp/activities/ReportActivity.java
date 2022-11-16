@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -22,23 +25,38 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.managers.DocumentState;
+import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.Test;
 
 public class ReportActivity extends AppCompatActivity  {
 
-    private LinearLayout testView;
-    private Spinner issueTypeSelect;
-    private HashMap<String, String> selectValuesToDbIDs = new HashMap<>();
     private Test test;
+    private HashMap<String, String> selectValuesToDbIDs;
+    private FirebaseManager firebaseManager;
 
+    private Spinner issueTypeSelect;
     private ArrayAdapter<String> selectAdapter;
+
+    private LinearLayout testView;
+    private Button submitBtn;
+    private ProgressBar submitProgressBar;
+    private EditText issueDetailsTextbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        selectValuesToDbIDs = new HashMap<>();
+        firebaseManager = new FirebaseManager();
+
+        submitProgressBar = findViewById(R.id.submitBar);
         testView = findViewById(R.id.reportedTestView);
+        submitBtn = findViewById(R.id.submitBtn);
+        issueDetailsTextbox = findViewById(R.id.issueDetails);
+
+        submitProgressBar.setVisibility(View.INVISIBLE);
 
         Intent intent = getIntent();
         if(intent != null) {
@@ -49,15 +67,35 @@ public class ReportActivity extends AppCompatActivity  {
         }
         issueTypeSelect = findViewById(R.id.issueTypeSelect);
 
-        selectValuesToDbIDs.put("TWO_TESTS", "רשומים שני מועדים, אבל קיים רק מועד האחד");
-        selectValuesToDbIDs.put("INCORRECT_TEST_TYPE", "רשום סוג אחר של מועד ממה שהוא אמור להיות");
-        selectValuesToDbIDs.put("DOESNT_EXIST", "המבחן הזה לא קיים יותר בלוח מבחנים");
-        selectValuesToDbIDs.put("CLASS_NUMS_WRONG", "הכיתות שקשורות למועד הזה לא נכונים");
+        selectValuesToDbIDs.put("רשומים שני מועדים, אבל קיים רק מועד האחד","TWO_TESTS");
+        selectValuesToDbIDs.put("רשום סוג אחר של מועד ממה שהוא אמור להיות", "INCORRECT_TEST_TYPE");
+        selectValuesToDbIDs.put("המבחן הזה לא קיים יותר בלוח מבחנים", "DOESNT_EXIST");
+        selectValuesToDbIDs.put("הכיתות שקשורות למועד הזה לא נכונים", "CLASS_NUMS_WRONG");
 
-        selectAdapter = new ArrayAdapter<String>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(selectValuesToDbIDs.values()));
+        selectAdapter = new ArrayAdapter<String>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(selectValuesToDbIDs.keySet()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         issueTypeSelect.setAdapter(selectAdapter);
 
+        submitBtn.setOnClickListener((v) -> {
+            if(issueDetailsTextbox.getText().toString().length() >= 5) {
+                String dbIssueID = selectValuesToDbIDs.get(selectAdapter.getItem(issueTypeSelect.getSelectedItemPosition()));
+                String details = issueDetailsTextbox.getText().toString();
+
+
+                submitBtn.setClickable(false);
+                submitProgressBar.setVisibility(View.VISIBLE);
+                firebaseManager.addReport(test, dbIssueID, details, (state) -> {
+                    if(state == DocumentState.FINISHED) {
+                        finish();
+                        Toast.makeText(this, "דוח נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
+                    } else if(state == DocumentState.FAILED) {
+                        submitProgressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this, "לא הצליח לשלוח דוח! בבקשה תנסו שוב", Toast.LENGTH_SHORT).show();
+                        submitBtn.setClickable(true);
+                    }
+                });
+            }
+        });
 
     }
 
