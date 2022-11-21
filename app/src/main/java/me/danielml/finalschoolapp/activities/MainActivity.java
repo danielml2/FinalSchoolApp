@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout testsView;
     private TextView lastUpdatedText;
 
+    private Button calendarMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         fileManager = new FileManager(getApplicationContext().getFilesDir());
         lastUpdatedText = findViewById(R.id.lastUpdatedText);
         testsView = findViewById(R.id.testsView);
+        calendarMenu = findViewById(R.id.calendarButton);
 
         try {
             tests = fileManager.getLocalTests();
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        calendarMenu.setOnClickListener((v) -> startActivity(new Intent(this, CalendarIntegration.class)));
     }
 
     public View buildView(Test test) {
