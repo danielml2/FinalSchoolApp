@@ -7,12 +7,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.UserProfileChangeRequest;
+
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private FirebaseManager manager;
+    private FirebaseManager fbManager;
 
     private EditText nameInput, emailInput, passwordInput, passwordConfirmation;
     private Button signUpSubmit;
@@ -24,6 +27,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         signUpSubmit = findViewById(R.id.signUpBtn);
 
+        fbManager = new FirebaseManager();
 
         emailInput = findViewById(R.id.newUserEmail);
         passwordInput = findViewById(R.id.newUserPassword);
@@ -37,7 +41,18 @@ public class SignUpActivity extends AppCompatActivity {
             if(isValidInfo()) {
                 String email = emailInput.getText().toString();
                 String password = emailInput.getText().toString();
+                String name = nameInput.getText().toString();
 
+                fbManager.signUp(email, password, (newUser) -> {
+                    UserProfileChangeRequest updateName = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                    newUser.updateProfile(updateName);
+                    System.out.println("New user added: " + newUser.getEmail());
+                }, (exception) -> {
+                    if(exception instanceof FirebaseAuthUserCollisionException)
+                        Toast.makeText(this, "Email already exists! ", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(this, "Failed to sign up! (" + exception.getCause() + ")", Toast.LENGTH_SHORT).show();
+                });
             }
         });
 
