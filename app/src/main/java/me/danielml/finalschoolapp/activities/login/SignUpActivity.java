@@ -1,4 +1,4 @@
-package me.danielml.finalschoolapp.activities;
+package me.danielml.finalschoolapp.activities.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import me.danielml.finalschoolapp.R;
 
-public class UserLoginActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_login);
+        setContentView(R.layout.activity_sign_up);
     }
 }
