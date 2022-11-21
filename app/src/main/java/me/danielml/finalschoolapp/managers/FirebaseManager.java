@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -25,12 +26,14 @@ public class FirebaseManager {
 
     private final FirebaseDatabase database;
     private final FirebaseFirestore firestore;
+    private final FirebaseAuth authentication;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
 
     public FirebaseManager() {
         this.database = FirebaseDatabase.getInstance();
         this.firestore = FirebaseFirestore.getInstance();
+        this.authentication = FirebaseAuth.getInstance();
     }
 
     public void getLastUpdatedTime(Consumer<Long> callback) {
@@ -109,6 +112,10 @@ public class FirebaseManager {
                     stateManager.accept(DocumentState.FAILED);
                 });
         stateManager.accept(DocumentState.STARTED);
+    }
+
+    public boolean isSignedIn() {
+        return authentication.getCurrentUser() != null;
     }
 
     private String getDatabaseIdFromTest(Test test) {

@@ -50,36 +50,38 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 0, 250);
 
-
-        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
-        dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
-            try {
-               long localLastUpdate = fileManager.getLocalLastUpdated();
-               if(localLastUpdate < lastUpdatedDB) {
-                   Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
-                   dbManager.getCurrentTests((tests) -> {
-                       Log.d("SchoolTests Sync", "Downloaded database data, new tests count: " + tests.size());
-                       try {
-                           Log.d("SchoolTests Sync", "Saving database data locally...");
-                           fileManager.saveDBDataLocally(lastUpdatedDB, tests);
-                           Log.d("SchoolTests Sync", "Saved database data locally!");
-                       } catch (JSONException | IOException e) {
-                           Log.e("SchoolTests Sync", "Failed saving local data! Data is not up to date!");
-                           e.printStackTrace();
-                       }
-                       startActivity(mainScreen);
-                   });
-               } else {
-                   Log.d("SchoolTests Sync", "Local data is up to date!");
-                   startActivity(mainScreen);
-               }
-            } catch (IOException | JSONException e) {
-                Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
-                e.printStackTrace();
-                finish();
-            }
-        });
-
+        if(!dbManager.isSignedIn())
+            startActivity(new Intent(this, UserLoginActivity.class));
+        else {
+            FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
+            dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
+                try {
+                    long localLastUpdate = fileManager.getLocalLastUpdated();
+                    if(localLastUpdate < lastUpdatedDB) {
+                        Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
+                        dbManager.getCurrentTests((tests) -> {
+                            Log.d("SchoolTests Sync", "Downloaded database data, new tests count: " + tests.size());
+                            try {
+                                Log.d("SchoolTests Sync", "Saving database data locally...");
+                                fileManager.saveDBDataLocally(lastUpdatedDB, tests);
+                                Log.d("SchoolTests Sync", "Saved database data locally!");
+                            } catch (JSONException | IOException e) {
+                                Log.e("SchoolTests Sync", "Failed saving local data! Data is not up to date!");
+                                e.printStackTrace();
+                            }
+                            startActivity(mainScreen);
+                        });
+                    } else {
+                        Log.d("SchoolTests Sync", "Local data is up to date!");
+                        startActivity(mainScreen);
+                    }
+                } catch (IOException | JSONException e) {
+                    Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
+                    e.printStackTrace();
+                    finish();
+                }
+            });
+        }
     }
 
     public String addDots(int dotsAmount) {
