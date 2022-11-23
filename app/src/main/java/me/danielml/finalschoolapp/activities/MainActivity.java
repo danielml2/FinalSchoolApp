@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.FileManager;
+import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.Test;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout testsView;
     private TextView lastUpdatedText;
 
+    private Button signOutTemp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         fileManager = new FileManager(getApplicationContext().getFilesDir());
         lastUpdatedText = findViewById(R.id.lastUpdatedText);
         testsView = findViewById(R.id.testsView);
+        signOutTemp = findViewById(R.id.signOutTemp);
+        signOutTemp.setOnClickListener((v) -> {
+            new FirebaseManager().signOut();
+        });
 
         try {
             tests = fileManager.getLocalTests();

@@ -130,6 +130,16 @@ public class FirebaseManager {
         }));
     }
 
+    public void signIn(String email, String password, Consumer<FirebaseUser> onSignIn, Consumer<Exception> onFailedSignIn) {
+        authentication.signInWithEmailAndPassword(email, password).addOnCompleteListener((task -> {
+            if(task.isSuccessful()) {
+                onSignIn.accept(authentication.getCurrentUser());
+            } else {
+                onFailedSignIn.accept(task.getException());
+            }
+        }));
+    }
+
     public void signOut() {
         authentication.signOut();
     }

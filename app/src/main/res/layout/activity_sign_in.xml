@@ -7,7 +7,7 @@
     tools:context=".activities.login.SignInActivity">
 
     <TextView
-        android:id="@+id/signInButton"
+        android:id="@+id/textTV"
         android:layout_width="117dp"
         android:layout_height="49dp"
         android:gravity="center"
@@ -80,7 +80,7 @@
         app:layout_constraintVertical_bias="0.29" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/signInBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="134dp"
