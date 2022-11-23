@@ -40,7 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpSubmit.setOnClickListener((v) -> {
             if(isValidInfo()) {
                 String email = emailInput.getText().toString();
-                String password = emailInput.getText().toString();
+                String password = passwordInput.getText().toString();
                 String name = nameInput.getText().toString();
 
                 fbManager.signUp(email, password, (newUser) -> {
