@@ -29,7 +29,11 @@ public class FileManager {
     }
 
     public long getLocalLastUpdated() throws IOException, JSONException {
-        return getJSONObject("data").getLong("last_updated");
+        JSONObject dataJSON = getJSONObject("data");
+        if(dataJSON.has("last_updated"))
+            return dataJSON.getLong("last_updated");
+        else
+            return -1;
     }
 
     public void saveDBDataLocally(long lastUpdated, List<Test> tests) throws JSONException, IOException {
@@ -48,6 +52,9 @@ public class FileManager {
 
     public List<Test> getLocalTests() throws FileNotFoundException, JSONException {
         JSONObject object = getJSONObject("data");
+
+        if(!object.has("tests"))
+            return new ArrayList<>();
 
         JSONArray jsonTests = object.getJSONArray("tests");
         List<Test> tests = new ArrayList<>();
@@ -70,6 +77,9 @@ public class FileManager {
 
     public JSONObject getJSONObject(String fileName) throws FileNotFoundException, JSONException {
         File file = new File(internalSaveLocation, fileName+ ".json");
+        if(!file.exists()) {
+            return new JSONObject();
+        }
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String jsonString = reader.lines().collect(Collectors.joining());
 
