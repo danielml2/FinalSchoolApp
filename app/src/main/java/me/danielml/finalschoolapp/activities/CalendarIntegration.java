@@ -1,10 +1,14 @@
 package me.danielml.finalschoolapp.activities;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,6 +27,20 @@ public class CalendarIntegration extends AppCompatActivity {
 
         calendarSelect = findViewById(R.id.calendarSelect);
 
+        registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (grantedPermissionMap) -> {
+            boolean allowedPermissions = grantedPermissionMap.values().stream().allMatch((Boolean::booleanValue));
+            if(!allowedPermissions){
+                    Toast.makeText(this, "Calendar integration needs calendar permissions in order to work!", Toast.LENGTH_SHORT).show();
+                    finish();
+            }
+            else
+                loadCalendarUI();
+        }).launch(new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR});
+
+    }
+
+    public void loadCalendarUI() {
+        Log.d("SchoolTests", "Calendar permission granted!");
         CalendarManager manager = new CalendarManager();
         manager.loadAvaliableCalendarIDs(this);
 
