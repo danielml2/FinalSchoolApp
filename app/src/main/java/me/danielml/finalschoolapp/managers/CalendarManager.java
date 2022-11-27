@@ -5,14 +5,27 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 
+import java.util.HashMap;
+import java.util.Set;
+
 public class CalendarManager {
+
+    private HashMap<String, Integer> availableCalendarIDs;
 
     private final String[] calendarProjectionArray = {
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
     };
 
-    public void printCalendars(Context context) {
+    public CalendarManager() {
+        this.availableCalendarIDs = new HashMap<>();
+    }
+
+    public Set<String> availableCalendarNames() {
+        return availableCalendarIDs.keySet();
+    }
+
+    public void loadAvaliableCalendarIDs(Context context) {
 
 
         Cursor cur = null;
@@ -22,11 +35,11 @@ public class CalendarManager {
 
         if(cur.getCount() > 0) {
             while(cur.moveToNext()) {
-                System.out.println("ID: " + cur.getInt(0));
-                System.out.println("Display Name: " + cur.getString(1));
+                availableCalendarIDs.put(cur.getString(1), cur.getInt(0));
             }
         }
         cur.close();
 
     }
+
 }
