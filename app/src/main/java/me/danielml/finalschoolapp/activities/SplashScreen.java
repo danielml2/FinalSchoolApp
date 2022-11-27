@@ -55,6 +55,8 @@ public class SplashScreen extends AppCompatActivity {
         dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
             try {
                long localLastUpdate = fileManager.getLocalLastUpdated();
+               if(localLastUpdate == -1)
+                   Log.w("SchoolTests Sync", "Failed loading local last updated, using fallback -1 value instead.");
                if(localLastUpdate < lastUpdatedDB) {
                    Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
                    dbManager.getCurrentTests((tests) -> {
