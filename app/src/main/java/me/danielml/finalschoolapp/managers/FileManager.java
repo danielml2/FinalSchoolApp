@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,5 +105,41 @@ public class FileManager {
         test.setCreationText(json.getString("creationText"));
 
         return test;
+    }
+
+    public void saveEventIDs(HashMap<String, Long> testIDsToEventIDs) throws IOException {
+
+        JSONObject jsonObject = new JSONObject();
+
+        testIDsToEventIDs.forEach((key, value) -> {
+            try {
+                jsonObject.put(key, value);
+            } catch (JSONException e) {
+                Log.e("SchoolTests", "Failed putting " + key + " into the JSON! (Event ID: " + value + ")");
+                e.printStackTrace();
+            }
+        });
+        writeJSON("calendar_events", jsonObject);
+    }
+
+    public HashMap<String, Long> getEventIDs() throws FileNotFoundException, JSONException {
+        JSONObject object = getJSONObject("calendar_events");
+
+        if(object.length() < 1) {
+            Log.e("SchoolTests", "Failed loading back event IDs!");
+            return new HashMap<>();
+        }
+
+        HashMap<String, Long> testIDsToEventIDs = new HashMap<>();
+        object.keys().forEachRemaining(testKey -> {
+            try {
+                testIDsToEventIDs.put(testKey, object.getLong(testKey));
+            } catch (JSONException e) {
+                Log.e("SchoolTests", "Failed loading event ID from JSON (Test key: " + testKey);
+                e.printStackTrace();
+            }
+        });
+
+        return testIDsToEventIDs;
     }
 }

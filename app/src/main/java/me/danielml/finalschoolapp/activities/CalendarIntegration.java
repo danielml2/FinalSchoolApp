@@ -13,16 +13,13 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
-import me.danielml.finalschoolapp.objects.Subject;
-import me.danielml.finalschoolapp.objects.Test;
-import me.danielml.finalschoolapp.objects.TestType;
 
 public class CalendarIntegration extends AppCompatActivity {
 
@@ -62,18 +59,25 @@ public class CalendarIntegration extends AppCompatActivity {
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
 
-        Test test;
-        try {
-            FileManager fileManager = new FileManager(this.getFilesDir());
-            test = fileManager.getLocalTests().get(0);
-        } catch (FileNotFoundException | JSONException e) {
-            e.printStackTrace();
-            ArrayList<Integer> list = new ArrayList<>();
-            test = new Test(Subject.ANATOMY, System.currentTimeMillis(), TestType.QUIZ, 5, list);
-        }
-        Test finalTest = test;
         updateButton.setOnClickListener((v) ->  {
-            manager.addEvent(this, finalTest, selectAdapter.getItem(calendarSelect.getSelectedItemPosition()));
+            FileManager fileManager = new FileManager(this.getFilesDir());
+
+            try {
+                HashMap<String, Long> eventIDs = manager.syncCalendarExport(
+                        fileManager.getLocalTests(),
+                        this,
+                        selectAdapter.getItem(calendarSelect.getSelectedItemPosition()),
+                        fileManager.getEventIDs());
+
+
+                fileManager.saveEventIDs(eventIDs);
+
+                Log.d("SchoolTests", "Saved test event IDs count: " + fileManager.getEventIDs().size());
+
+            } catch (IOException | JSONException exception) {
+                Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
+                exception.printStackTrace();
+            }
         });
         }
 
