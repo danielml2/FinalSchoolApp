@@ -5,21 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
-import me.danielml.finalschoolapp.objects.Test;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
@@ -50,38 +48,38 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 0, 250);
 
-
-        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
-        dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
-            try {
-               long localLastUpdate = fileManager.getLocalLastUpdated();
-               if(localLastUpdate == -1)
-                   Log.w("SchoolTests Sync", "Failed loading local last updated, using fallback -1 value instead.");
-               if(localLastUpdate < lastUpdatedDB) {
-                   Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
-                   dbManager.getCurrentTests((tests) -> {
-                       Log.d("SchoolTests Sync", "Downloaded database data, new tests count: " + tests.size());
-                       try {
-                           Log.d("SchoolTests Sync", "Saving database data locally...");
-                           fileManager.saveDBDataLocally(lastUpdatedDB, tests);
-                           Log.d("SchoolTests Sync", "Saved database data locally!");
-                       } catch (JSONException | IOException e) {
-                           Log.e("SchoolTests Sync", "Failed saving local data! Data is not up to date!");
-                           e.printStackTrace();
-                       }
-                       startActivity(mainScreen);
-                   });
-               } else {
-                   Log.d("SchoolTests Sync", "Local data is up to date!");
-                   startActivity(mainScreen);
-               }
-            } catch (IOException | JSONException e) {
-                Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
-                e.printStackTrace();
-                finish();
-            }
-        });
-
+        if(!dbManager.isSignedIn())
+            startActivity(new Intent(this, UserLoginActivity.class));
+        else {
+            FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
+            dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
+                try {
+                    long localLastUpdate = fileManager.getLocalLastUpdated();
+                    if(localLastUpdate < lastUpdatedDB) {
+                        Log.d("SchoolTests Sync", "Local data is out of date, syncing data from database");
+                        dbManager.getCurrentTests((tests) -> {
+                            Log.d("SchoolTests Sync", "Downloaded database data, new tests count: " + tests.size());
+                            try {
+                                Log.d("SchoolTests Sync", "Saving database data locally...");
+                                fileManager.saveDBDataLocally(lastUpdatedDB, tests);
+                                Log.d("SchoolTests Sync", "Saved database data locally!");
+                            } catch (JSONException | IOException e) {
+                                Log.e("SchoolTests Sync", "Failed saving local data! Data is not up to date!");
+                                e.printStackTrace();
+                            }
+                            startActivity(mainScreen);
+                        });
+                    } else {
+                        Log.d("SchoolTests Sync", "Local data is up to date!");
+                        startActivity(mainScreen);
+                    }
+                } catch (IOException | JSONException e) {
+                    Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
+                    e.printStackTrace();
+                    finish();
+                }
+            });
+        }
     }
 
     public String addDots(int dotsAmount) {
