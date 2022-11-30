@@ -15,6 +15,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.SyncService;
 import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
@@ -38,22 +39,25 @@ public class SplashScreen extends AppCompatActivity {
 
 
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void run() {
-                loadingText.setText("Arbitrary Load Screen commencing" + addDots(dotsCount));
-                dotsCount += 1;
-                dotsCount %= 5;
-            }
-        }, 0, 250);
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @SuppressLint("SetTextI18n")
+//            @Override
+//            public void run() {
+//                loadingText.setText("Arbitrary Load Screen commencing" + addDots(dotsCount));
+//                dotsCount += 1;
+//                dotsCount %= 5;
+//            }
+//        }, 0, 250);
 
-       syncDataAndSignIn();
+        Intent intent = new Intent(this, SyncService.class);
+        startForegroundService(intent);
+
+//       syncDataAndSignIn();
     }
 
     @Override
     protected void onRestart() {
-        syncDataAndSignIn();
+//        syncDataAndSignIn();
         super.onRestart();
     }
 
