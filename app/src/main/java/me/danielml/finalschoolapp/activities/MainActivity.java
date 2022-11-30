@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         signOutTemp = findViewById(R.id.signOutTemp);
         signOutTemp.setOnClickListener((v) -> {
             new FirebaseManager().signOut();
+            finish();
         });
 
         try {

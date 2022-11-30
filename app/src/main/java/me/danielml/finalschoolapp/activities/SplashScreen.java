@@ -48,6 +48,16 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 0, 250);
 
+       syncDataAndSignIn();
+    }
+
+    @Override
+    protected void onRestart() {
+        syncDataAndSignIn();
+        super.onRestart();
+    }
+
+    public void syncDataAndSignIn() {
         if(!dbManager.isSignedIn())
             startActivity(new Intent(this, UserLoginActivity.class));
         else {
