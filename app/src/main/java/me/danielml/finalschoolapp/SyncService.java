@@ -12,11 +12,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.os.ProcessCompat;
 
 public class SyncService extends Service {
 
@@ -28,7 +25,7 @@ public class SyncService extends Service {
 
     @Override
     public void onCreate() {
-        HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread thread = new HandlerThread("SchoolTestsSync", Process.THREAD_PRIORITY_BACKGROUND);
 
         thread.start();
         serviceLooper = thread.getLooper();
@@ -40,7 +37,7 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        startForeground(62318, staticRunningNotification());
+        startForeground(1, staticRunningNotification());
         Message msg = syncHandler.obtainMessage();
         msg.arg1 = startId;
         syncHandler.sendEmptyMessage(0);
@@ -52,7 +49,7 @@ public class SyncService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.d("SchoolTests", a + "");
+                Log.d("SchoolTests: Background Syncer", a + "");
                 a++;
             }
         });
@@ -78,6 +75,7 @@ public class SyncService extends Service {
 
         return builder.setContentTitle("yeah")
                 .setContentText("beep boop")
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
     }
 
