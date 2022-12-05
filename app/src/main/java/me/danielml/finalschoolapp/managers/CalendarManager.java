@@ -21,7 +21,7 @@ import me.danielml.finalschoolapp.objects.Test;
 
 public class CalendarManager {
 
-    private HashMap<String, Integer> availableCalendarIDs;
+    private HashMap<String, Long> availableCalendarIDs;
 
     private final String[] calendarProjectionArray = {
             CalendarContract.Calendars._ID,
@@ -37,8 +37,6 @@ public class CalendarManager {
     }
 
     public void loadAvaliableCalendarIDs(Context context) {
-
-
         Cursor cur = null;
         ContentResolver resolver = context.getContentResolver();
 
@@ -46,7 +44,7 @@ public class CalendarManager {
 
         if(cur.getCount() > 0) {
             while(cur.moveToNext()) {
-                availableCalendarIDs.put(cur.getString(1), cur.getInt(0));
+                availableCalendarIDs.put(cur.getString(1), cur.getLong(0));
             }
         }
         cur.close();
