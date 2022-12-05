@@ -142,4 +142,15 @@ public class FileManager {
 
         return testIDsToEventIDs;
     }
+
+    public void saveCalendarID(long calID) throws IOException, JSONException {
+        JSONObject object = new JSONObject().put("calID", calID);
+        writeJSON("preferences", object);
+    }
+
+    public long getCalendarID() throws FileNotFoundException, JSONException {
+        JSONObject obj = getJSONObject("preferences");
+        return obj.has("calID") ? obj.getLong("calID") : -1;
+    }
+
 }

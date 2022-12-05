@@ -13,9 +13,11 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
@@ -55,20 +57,36 @@ public class CalendarIntegration extends AppCompatActivity {
         manager.loadAvaliableCalendarIDs(this);
 
 
+        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
+        String calName = null;
+        try {
+            long calID = fileManager.getCalendarID();
+            calName = manager.getNameFromID(calID);
+        } catch (FileNotFoundException | JSONException e) {
+            e.printStackTrace();
+        }
+
+
         selectAdapter = new ArrayAdapter<String>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
 
-        updateButton.setOnClickListener((v) ->  {
-            FileManager fileManager = new FileManager(this.getFilesDir());
+        if(calName != null)
+            calendarSelect.setSelection(selectAdapter.getPosition(calName));
 
+        String savedName = calName;
+        updateButton.setOnClickListener((v) ->  {
             try {
+                String selectedCalendar = selectAdapter.getItem(calendarSelect.getSelectedItemPosition());
+
+                if(!selectedCalendar.equals(savedName))
+                    fileManager.saveCalendarID(manager.getIDFromName(selectedCalendar));
+
                 HashMap<String, Long> eventIDs = manager.syncCalendarExport(
                         fileManager.getLocalTests(),
                         this,
                         selectAdapter.getItem(calendarSelect.getSelectedItemPosition()),
                         fileManager.getEventIDs());
-
 
                 fileManager.saveEventIDs(eventIDs);
 

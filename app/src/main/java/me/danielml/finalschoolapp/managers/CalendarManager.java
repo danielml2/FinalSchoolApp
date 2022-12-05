@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -123,6 +125,20 @@ public class CalendarManager {
     private String getEventIDForTest(Test test) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate()) + "_" + test.getGradeNum();
+    }
+
+    public String getNameFromID(long calID) {
+        Optional<Map.Entry<String, Long>> optional =
+                availableCalendarIDs.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue() == calID)
+                        .findFirst();
+
+        return optional.map(Map.Entry::getKey).orElse(null);
+    }
+
+    public long getIDFromName(String calName) {
+       return availableCalendarIDs.getOrDefault(calName, -1L);
     }
 
 }
