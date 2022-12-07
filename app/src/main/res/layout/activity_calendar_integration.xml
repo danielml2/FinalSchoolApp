@@ -41,7 +41,7 @@
         app:layout_constraintVertical_bias="0.405" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/autoUpdateBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Auto update calendar in background"

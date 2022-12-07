@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ public class CalendarIntegration extends AppCompatActivity {
     private ArrayAdapter<String> selectAdapter;
 
     private Button updateButton;
+    private CheckBox autoUpdateBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,7 @@ public class CalendarIntegration extends AppCompatActivity {
 
         calendarSelect = findViewById(R.id.calendarSelect);
         updateButton = findViewById(R.id.exportToCalendarButton);
-
+        autoUpdateBtn = findViewById(R.id.autoUpdateBox);
 
         registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (grantedPermissionMap) -> {
             boolean allowedPermissions = grantedPermissionMap.values().stream().allMatch((Boolean::booleanValue));
@@ -59,15 +61,18 @@ public class CalendarIntegration extends AppCompatActivity {
 
         FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
         String calName = null;
+        boolean autoUpdate = false;
         try {
             long calID = fileManager.getCalendarID();
             calName = manager.getNameFromID(calID);
+            autoUpdate = fileManager.getAutoUpdate();
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
         }
 
 
-        selectAdapter = new ArrayAdapter<String>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
+        autoUpdateBtn.setChecked(autoUpdate);
+        selectAdapter = new ArrayAdapter<>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
 
@@ -95,6 +100,14 @@ public class CalendarIntegration extends AppCompatActivity {
             } catch (IOException | JSONException exception) {
                 Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
                 exception.printStackTrace();
+            }
+        });
+        autoUpdateBtn.setOnCheckedChangeListener((btn, checked) -> {
+            Log.d("SchoolTests", "Auto update: " + checked);
+            try {
+                fileManager.saveAutoUpdate(checked);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
         });
         }

@@ -153,4 +153,15 @@ public class FileManager {
         return obj.has("calID") ? obj.getLong("calID") : -1;
     }
 
+    public boolean getAutoUpdate() throws FileNotFoundException, JSONException {
+        JSONObject obj = getJSONObject("preferences");
+        return obj.has("autoUpdate") && obj.getBoolean("autoUpdate");
+    }
+
+    public void saveAutoUpdate(boolean autoUpdate) throws IOException, JSONException {
+        JSONObject obj = getJSONObject("preferences");
+        obj.put("autoUpdate", autoUpdate);
+        writeJSON("preferences", obj);
+    }
+
 }
