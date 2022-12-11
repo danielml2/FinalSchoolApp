@@ -133,11 +133,18 @@ public class FileManager {
         writeJSON("calendar_events", jsonObject);
     }
 
+    public void clearEventIDs() {
+        File file = new File(internalSaveLocation + "/calendar_events.json");
+        Log.d("SchoolTests", "File exists: " + file.exists());
+        boolean deleted = file.delete();
+        Log.d("SchoolTests", "File deleted successfully: " + deleted);
+    }
+
     public HashMap<String, Long> getEventIDs() throws FileNotFoundException, JSONException {
         JSONObject object = getJSONObject("calendar_events");
 
         if(object.length() < 1) {
-            Log.e("SchoolTests", "Failed loading back event IDs!");
+            Log.e("SchoolTests", "Failed loading back event IDs! File deleted or corrupted?");
             return new HashMap<>();
         }
 

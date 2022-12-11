@@ -59,38 +59,48 @@ public class CalendarIntegration extends AppCompatActivity {
         manager.loadAvaliableCalendarIDs(this);
 
 
-        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
-        String calName = null;
-        boolean autoUpdate = false;
-        try {
-            long calID = fileManager.getCalendarID();
-            calName = manager.getNameFromID(calID);
-            autoUpdate = fileManager.getAutoUpdate();
-        } catch (FileNotFoundException | JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        autoUpdateBtn.setChecked(autoUpdate);
         selectAdapter = new ArrayAdapter<>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
 
-        if(calName != null)
-            calendarSelect.setSelection(selectAdapter.getPosition(calName));
+        FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
+        String calName = null;
+        boolean autoUpdate = false;
+        long calID = -1;
+        try {
+            calID = fileManager.getCalendarID();
+            calName = manager.getNameFromID(calID);
+            autoUpdate = fileManager.getAutoUpdate();
+            if(calName != null)
+                calendarSelect.setSelection(selectAdapter.getPosition(calName));
+            else {
+                calID = -1;
+                Toast.makeText(this,"Saved calendar was deleted or corrupted, please choose a new calendar to export for.", Toast.LENGTH_SHORT).show();
+                fileManager.clearEventIDs();
+            }
+        } catch (FileNotFoundException | JSONException e) {
+            calID = -1;
+            e.printStackTrace();
+        }
+        autoUpdateBtn.setChecked(autoUpdate);
 
-        String savedName = calName;
+        long prevID = calID;
         updateButton.setOnClickListener((v) ->  {
             try {
                 String selectedCalendar = selectAdapter.getItem(calendarSelect.getSelectedItemPosition());
 
-                if(!selectedCalendar.equals(savedName))
-                    fileManager.saveCalendarID(manager.getIDFromName(selectedCalendar));
+                long newCalID = manager.getIDFromName(selectedCalendar);
+
+                if(prevID != newCalID)
+                {
+                    fileManager.saveCalendarID(newCalID);
+                    fileManager.clearEventIDs();
+                }
 
                 HashMap<String, Long> eventIDs = manager.syncCalendarExport(
                         fileManager.getLocalTests(),
                         this,
-                        selectAdapter.getItem(calendarSelect.getSelectedItemPosition()),
+                        newCalID,
                         fileManager.getEventIDs());
 
                 fileManager.saveEventIDs(eventIDs);

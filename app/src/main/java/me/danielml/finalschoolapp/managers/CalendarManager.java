@@ -42,15 +42,21 @@ public class CalendarManager {
         Cursor cur = null;
         ContentResolver resolver = context.getContentResolver();
 
-        cur = resolver.query(CalendarContract.Calendars.CONTENT_URI, calendarProjectionArray, null ,null, null);
+        cur = resolver.query(CalendarContract.Calendars.CONTENT_URI, calendarProjectionArray, null, null, null);
 
-        if(cur.getCount() > 0) {
-            while(cur.moveToNext()) {
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
                 availableCalendarIDs.put(cur.getString(1), cur.getLong(0));
             }
         }
         cur.close();
 
+    }
+
+    public boolean doesCalendarExist(long calID, Context context) {
+        if(availableCalendarIDs.isEmpty())
+            loadAvaliableCalendarIDs(context);
+        return availableCalendarIDs.containsValue(calID);
     }
 
     public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, String calName, HashMap<String, Long> savedEventIDs) {
@@ -86,7 +92,7 @@ public class CalendarManager {
             Log.d("SchoolTests", "Added new test to the calendar: " + getEventIDForTest(test) + " wtih new event ID: " + eventID);
             testIDtoEventID.put(getEventIDForTest(test), eventID);
         });
-        Log.d("SchoolTests", "Applied " + (removals.size() + additions.size()) + " changes to the calendar.");
+        Log.d("SchoolTests", "Applied " + (removals.size() + additions.size()) + " changes to the calendar. (" + removals.size() + " removals and " + additions.size() + " additions)");
         testIDtoEventID.putAll(savedEventIDs);
 
 

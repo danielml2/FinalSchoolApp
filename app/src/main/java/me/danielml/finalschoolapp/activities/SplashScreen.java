@@ -52,12 +52,12 @@ public class SplashScreen extends AppCompatActivity {
         Intent intent = new Intent(this, SyncService.class);
         startForegroundService(intent);
 
-//       syncDataAndSignIn();
+       syncDataAndSignIn();
     }
 
     @Override
     protected void onRestart() {
-//        syncDataAndSignIn();
+        syncDataAndSignIn();
         super.onRestart();
     }
 

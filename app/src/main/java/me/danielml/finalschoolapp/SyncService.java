@@ -19,7 +19,9 @@ import org.json.JSONException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 
+import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 
@@ -35,16 +37,26 @@ public class SyncService extends Service {
     private boolean running = false;
     private final long DELAY = 30000;
 
+    private boolean autoUpdateCalendar = false;
+    private CalendarManager calendarManager;
+    private long calID = -1;
 
     @Override
     public void onCreate() {
         HandlerThread thread = new HandlerThread("SchoolTestsSync", Process.THREAD_PRIORITY_BACKGROUND);
         fileManager = new FileManager(getApplicationContext().getFilesDir());
         firebaseManager = new FirebaseManager();
+        calendarManager = new CalendarManager();
 
         thread.start();
         try {
             lastChecked = fileManager.getLastCheck();
+            autoUpdateCalendar = fileManager.getAutoUpdate();
+            if(autoUpdateCalendar)
+            {
+                calID = fileManager.getCalendarID();
+                calID = calendarManager.doesCalendarExist(calID, getApplicationContext()) ? calID : -1;
+            }
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
         }
@@ -70,6 +82,8 @@ public class SyncService extends Service {
 
         Log.d("SchoolTests", "Time since last update: " + timeSinceLastUpdate);
         Log.d("SchoolTests", "Custom delay: " + customFirstDelay);
+        Log.d("SchoolTests", "Calendar ID stored: " + calID);
+
 
         if(!running) {
             syncHandler.post(() -> {
@@ -104,6 +118,15 @@ public class SyncService extends Service {
                             Log.d("SchoolTests Sync", "Saving database data locally...");
                             fileManager.saveDBDataLocally(lastUpdatedDB, tests);
                             Log.d("SchoolTests Sync (Background)", "Saved database data locally!");
+                            if(autoUpdateCalendar && calID != -1) {
+                                Log.d("SchoolTests Sync (Background)", "Updating calendar...");
+                                HashMap<String, Long> savedEventIDs = fileManager.getEventIDs();
+                                savedEventIDs = calendarManager.syncCalendarExport(tests, getApplicationContext(), calID, savedEventIDs);
+                                fileManager.saveEventIDs(savedEventIDs);
+                            } else if(autoUpdateCalendar && calID == -1) {
+                                Log.e("SchoolTests Sync (Background)", "Invalid calendar ID!");
+                            }
+
                         } catch (JSONException | IOException e) {
                             Log.e("SchoolTests Sync (Background)", "Failed saving local data! Data is not up to date!");
                             e.printStackTrace();
