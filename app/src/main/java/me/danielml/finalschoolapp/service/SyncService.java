@@ -1,9 +1,11 @@
-package me.danielml.finalschoolapp;
+package me.danielml.finalschoolapp.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -21,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
+import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
@@ -40,10 +43,11 @@ public class SyncService extends Service {
     private boolean autoUpdateCalendar = false;
     private CalendarManager calendarManager;
     private long calID = -1;
+    private HandlerThread thread;
 
     @Override
     public void onCreate() {
-        HandlerThread thread = new HandlerThread("SchoolTestsSync", Process.THREAD_PRIORITY_BACKGROUND);
+        thread = new HandlerThread("SchoolTestsSync", Process.THREAD_PRIORITY_BACKGROUND);
         fileManager = new FileManager(getApplicationContext().getFilesDir());
         firebaseManager = new FirebaseManager();
         calendarManager = new CalendarManager();
@@ -80,9 +84,9 @@ public class SyncService extends Service {
         long customDelay = DELAY - timeSinceLastUpdate;
         boolean customFirstDelay = timeSinceLastUpdate >= 0 && timeSinceLastUpdate <= DELAY;
 
-        Log.d("SchoolTests", "Time since last update: " + timeSinceLastUpdate);
-        Log.d("SchoolTests", "Custom delay: " + customFirstDelay);
-        Log.d("SchoolTests", "Calendar ID stored: " + calID);
+        Log.d("SchoolTests Sync (Background)", "Time since last update: " + timeSinceLastUpdate);
+        Log.d("SchoolTests Sync (Background)", "Custom delay: " + customFirstDelay);
+        Log.d("SchoolTests Sync (Background)", "Calendar ID stored: " + calID);
 
 
         if(!running) {
@@ -92,14 +96,16 @@ public class SyncService extends Service {
             while(running)
             {
                 try {
+                    Log.d("SchoolTests Sync (Background) ", "Waiting on service delay...");
                     Thread.sleep(firstRun ? customDelay : DELAY);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if(firstRun) firstRun = false;
-                sync();
-
+                if(running)
+                    sync();
             }
+            Log.d("SchoolTests Sync (Background) ", "Background Sync Loop terminated");
         });
         }
 
@@ -164,14 +170,24 @@ public class SyncService extends Service {
 
         channel.setDescription("test");
 
+        Intent endIntent = new Intent(this, ServiceKiller.class);
+        endIntent.putExtra("endService",true);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, endIntent, 0);
+
         return builder.setContentTitle("yeah")
                 .setContentText("beep boop")
+                .addAction(R.mipmap.ic_launcher, "End Service", pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
     }
 
     @Override
     public void onDestroy() {
-        Log.d("SchoolTests", "Service has ended!");
+        Log.d("SchoolTests Sync (Background)", "Service has ended!");
+        running = false;
+        thread.interrupt();
+        thread.quitSafely();
+        stopSelf();
+        stopForeground(true);
     }
 }

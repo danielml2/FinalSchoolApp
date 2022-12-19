@@ -15,10 +15,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import me.danielml.finalschoolapp.R;
-import me.danielml.finalschoolapp.SyncService;
+import me.danielml.finalschoolapp.service.SyncService;
 import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
+import me.danielml.finalschoolapp.service.SyncService;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
@@ -51,8 +52,7 @@ public class SplashScreen extends AppCompatActivity {
 
         Intent intent = new Intent(this, SyncService.class);
         startForegroundService(intent);
-
-       syncDataAndSignIn();
+        syncDataAndSignIn();
     }
 
     @Override
