@@ -11,12 +11,15 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.objects.Test;
@@ -83,7 +86,7 @@ public class CalendarManager {
             Log.d("SchoolTests", "Added new test to the calendar: " + getEventIDForTest(test) + " wtih new event ID: " + eventID);
             testIDtoEventID.put(getEventIDForTest(test), eventID);
         });
-        Log.d("SchoolTests", "Applied " + (removals.size() + additions.size()) + " changes to the calendar.");
+        Log.d("SchoolTests", "Applied " + (additions.size() + removals.size()) + " changes to the calendar. (" + additions.size() + " Additions, " + removals.size() + " Removals)");
         testIDtoEventID.putAll(savedEventIDs);
 
 
@@ -114,8 +117,10 @@ public class CalendarManager {
     public ContentValues toEventValues(Test test, long calID) {
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
-        values.put(CalendarContract.Events.DTSTART, test.getDueDate());
-        values.put(CalendarContract.Events.DTEND, test.getDueDate() + 86400000);
+        // I have no idea why is it like this, but otherwise it just puts all the events one day earlier then it should be
+        values.put(CalendarContract.Events.DTSTART, test.getDueDate() + TimeUnit.DAYS.toMillis(1));
+        values.put(CalendarContract.Events.ALL_DAY, 1);
+        values.put(CalendarContract.Events.DTEND, test.getDueDate() + TimeUnit.DAYS.toMillis(2));
         values.put(CalendarContract.Events.DESCRIPTION, "כיתות: "+ Arrays.toString(test.getClassNums().toArray()).replace("[","").replace("]","").replace("-1","שכבתי"));
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
         values.put(CalendarContract.Events.TITLE, test.getType().getName() + " " + test.getSubject().getDefaultName());
