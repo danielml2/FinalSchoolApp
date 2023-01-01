@@ -1,7 +1,6 @@
 package me.danielml.finalschoolapp.managers;
 
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +34,18 @@ public class FileManager {
             return dataJSON.getLong("last_updated");
         else
             return -1;
+    }
+
+    public void saveLastCheck(long lastCheck) throws JSONException, IOException {
+        JSONObject object = new JSONObject();
+        object.put("last_checked", lastCheck);
+
+       writeJSON("syncSettings", object);
+    }
+
+    public long getLastCheck() throws FileNotFoundException, JSONException {
+        JSONObject object = getJSONObject("syncSettings");
+        return object.has("last_checked") ? object.getLong("last_checked") : System.currentTimeMillis();
     }
 
     public void saveDBDataLocally(long lastUpdated, List<Test> tests) throws JSONException, IOException {
@@ -126,7 +137,7 @@ public class FileManager {
         JSONObject object = getJSONObject("calendar_events");
 
         if(object.length() < 1) {
-            Log.e("SchoolTests", "Failed loading back event IDs!");
+            Log.e("SchoolTests", "Failed loading back event IDs! File deleted or corrupted?");
             return new HashMap<>();
         }
 

@@ -54,9 +54,19 @@ public class CalendarManager {
 
     }
 
-    public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, String calName, HashMap<String, Long> savedEventIDs) {
+    public boolean doesCalendarExist(long calID, Context context) {
+        if(availableCalendarIDs.isEmpty())
+            loadAvaliableCalendarIDs(context);
 
+        return availableCalendarIDs.containsValue(calID);
+    }
+
+    public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, String calName, HashMap<String, Long> savedEventIDs) {
         long calID = availableCalendarIDs.get(calName);
+        return syncCalendarExport(tests, context, calID, savedEventIDs);
+    }
+
+    public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, long calID, HashMap<String, Long> savedEventIDs) {
 
         List<String> testKeys = tests.stream().map(this::getEventJSONName).collect(Collectors.toList());
 
@@ -91,7 +101,8 @@ public class CalendarManager {
         return testIDtoEventID;
     }
 
-    public long addEvent(Test test, long calID, Context context) {
+
+        public long addEvent(Test test, long calID, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
         System.out.println(test.getType().getName() + " " + test.getSubject().getDefaultName());

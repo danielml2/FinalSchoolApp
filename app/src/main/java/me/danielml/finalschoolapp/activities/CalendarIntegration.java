@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
@@ -102,8 +103,10 @@ public class CalendarIntegration extends AppCompatActivity {
 
                 fileManager.saveEventIDs(updatedEventIDs);
 
+                Log.d("SchoolTests", "New calendar ID: " + manager.getIDFromName(selectedCalendar));
                 Log.d("SchoolTests", "Saved test event IDs count: " + fileManager.getEventIDs().size());
 
+                fileManager.saveAutoUpdate(autoUpdateBtn.isChecked());
             } catch (IOException | JSONException exception) {
                 Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
                 exception.printStackTrace();
