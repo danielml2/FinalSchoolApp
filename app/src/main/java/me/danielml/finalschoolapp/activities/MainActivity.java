@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView lastUpdatedText;
 
     private Button signOutTemp;
+	private Button calendarMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
             new FirebaseManager().signOut();
             finish();
         });
-
+		calendarMenu = findViewById(R.id.calendarButton);
+		
         try {
             tests = fileManager.getLocalTests();
             lastUpdatedTime = fileManager.getLocalLastUpdated();
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        calendarMenu.setOnClickListener((v) -> startActivity(new Intent(this, CalendarIntegration.class)));
     }
 
     public View buildView(Test test) {
