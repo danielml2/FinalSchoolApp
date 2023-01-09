@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
@@ -20,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+
+import me.danielml.finalschoolapp.objects.FilterProfile;
 import me.danielml.finalschoolapp.objects.Subject;
 import me.danielml.finalschoolapp.objects.Test;
 import me.danielml.finalschoolapp.objects.TestType;
@@ -36,6 +39,44 @@ public class FirebaseManager {
         this.database = FirebaseDatabase.getInstance();
         this.firestore = FirebaseFirestore.getInstance();
         this.authentication = FirebaseAuth.getInstance();
+    }
+
+    public void getUserFilterProfile(Consumer<FilterProfile> profileCallback) {
+        String userID = authentication.getCurrentUser().getUid();
+
+        database.getReference()
+                .child("profiles")
+                .child(userID)
+                .get()
+                .addOnCompleteListener((task) -> {
+                    if(task.getResult().getValue() != null) {
+                        DataSnapshot profileSnapshot = task.getResult();
+
+
+                        int classNum = profileSnapshot.child("classNum").getValue(Integer.class);
+                        int gradeNum = profileSnapshot.child("gradeNum").getValue(Integer.class);
+
+                        Subject majorASubject = Subject.from(profileSnapshot.child("majorA").getValue(String.class));
+                        Subject majorBSubject = Subject.from(profileSnapshot.child("majorB").getValue(String.class));
+
+                        FilterProfile filterProfile = new FilterProfile(classNum, gradeNum, majorASubject, majorBSubject);
+                        profileCallback.accept(filterProfile);
+                    } else {
+                        profileCallback.accept(null);
+                    }
+                });
+    }
+
+    public void setUserFilterProfile(FilterProfile filterProfile) {
+        String userID = authentication.getCurrentUser().getUid();
+
+        database.getReference()
+                .child("profiles")
+                .child(userID)
+                .setValue(filterProfile)
+                .addOnCompleteListener((task) -> {
+                    System.out.println("User profile task: " + task.isSuccessful());
+                });
     }
 
     public void getLastUpdatedTime(Consumer<Long> callback) {
