@@ -53,8 +53,12 @@ public class SplashScreen extends AppCompatActivity {
 //            }
 //        }, 0, 250);
 
-        Intent intent = new Intent(this, SyncService.class);
-        startForegroundService(intent);
+        if(!SyncService.SERVICE_RUNNING) {
+            Intent intent = new Intent(this, SyncService.class);
+            startForegroundService(intent);
+        } else {
+            Log.d("SchoolTests", "Service is already running!");
+        }
         syncDataAndSignIn();
     }
 
