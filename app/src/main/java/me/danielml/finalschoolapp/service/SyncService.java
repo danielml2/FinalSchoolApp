@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -30,6 +29,9 @@ import me.danielml.finalschoolapp.managers.FirebaseManager;
 
 public class SyncService extends Service {
 
+    public static boolean SERVICE_RUNNING = false;
+    private final long DELAY = 30000;
+
     private Looper serviceLooper;
     private Handler syncHandler;
     private FileManager fileManager;
@@ -37,8 +39,6 @@ public class SyncService extends Service {
 
     private Notification notification;
     private long lastChecked;
-    private boolean running = false;
-    private final long DELAY = 30000;
 
     private boolean autoUpdateCalendar = false;
     private CalendarManager calendarManager;
@@ -91,11 +91,11 @@ public class SyncService extends Service {
         Log.d("SchoolTests Sync (Background)", "Calendar ID stored: " + calID);
 
 
-        if(!running) {
+        if(!SERVICE_RUNNING) {
             syncHandler.post(() -> {
                 boolean firstRun = customFirstDelay;
-                running = true;
-            while(running)
+                SERVICE_RUNNING = true;
+            while(SERVICE_RUNNING)
             {
                 try {
                     Log.d("SchoolTests Sync (Background) ", "Waiting on service delay...");
@@ -104,7 +104,7 @@ public class SyncService extends Service {
                     e.printStackTrace();
                 }
                 if(firstRun) firstRun = false;
-                if(running)
+                if(SERVICE_RUNNING)
                     sync();
             }
             Log.d("SchoolTests Sync (Background) ", "Background Sync Loop terminated");
@@ -191,7 +191,7 @@ public class SyncService extends Service {
     @Override
     public void onDestroy() {
         Log.d("SchoolTests Sync (Background)", "Service has ended!");
-        running = false;
+        SERVICE_RUNNING = false;
         thread.interrupt();
         thread.quitSafely();
         stopSelf();
