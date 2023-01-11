@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button signOutTemp;
 	private Button calendarMenu;
+    private Button settingsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 		calendarMenu = findViewById(R.id.calendarButton);
+        settingsBtn = findViewById(R.id.settingsBtn);
 		
         try {
             tests = fileManager.getLocalTests();
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         calendarMenu.setOnClickListener((v) -> startActivity(new Intent(this, CalendarIntegration.class)));
+        settingsBtn.setOnClickListener((v) -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     public View buildView(Test test) {
