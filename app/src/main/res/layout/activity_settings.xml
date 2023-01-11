@@ -33,6 +33,8 @@
         android:id="@+id/classNumSpinner"
         android:layout_width="241dp"
         android:layout_height="34dp"
+        android:layoutDirection="rtl"
+        android:textDirection="rtl"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.535"
