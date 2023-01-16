@@ -3,6 +3,7 @@ package me.danielml.finalschoolapp.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -43,7 +44,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         majorsSelectUI = findViewById(R.id.majorsLayout);
 
+        firebaseManager.getUserFilterProfile(this::updateUIWithProfile);
+    }
 
+    public void updateUIWithProfile(FilterProfile profile) {
+
+        Log.d("SchoolTests","Profile Grade Num: " + profile.getGradeNum());
+        Log.d("SchoolTests","Profile Class Num: " + profile.getClassNum());
+        gradeSpinner.setSelection((profile.getGradeNum()-1) - GRADE_NAMES.length);
     }
 
 
