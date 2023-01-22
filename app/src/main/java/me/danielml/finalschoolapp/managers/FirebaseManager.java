@@ -56,8 +56,12 @@ public class FirebaseManager {
                         int classNum = profileSnapshot.child("classNum").getValue(Integer.class);
                         int gradeNum = profileSnapshot.child("gradeNum").getValue(Integer.class);
 
-                        Subject majorASubject = Subject.from(profileSnapshot.child("majorA").getValue(String.class));
-                        Subject majorBSubject = Subject.from(profileSnapshot.child("majorB").getValue(String.class));
+                        Subject majorASubject = null, majorBSubject = null;
+                        if(gradeNum >= 10) {
+
+                            majorASubject = Subject.from(profileSnapshot.child("majorA").getValue(String.class));
+                            majorBSubject = Subject.from(profileSnapshot.child("majorB").getValue(String.class));
+                        }
 
                         FilterProfile filterProfile = new FilterProfile(classNum, gradeNum, majorASubject, majorBSubject);
                         profileCallback.accept(filterProfile);
