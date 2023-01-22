@@ -4,58 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     tools:context=".activities.SettingsActivity">
 
-    <Spinner
-        android:id="@+id/gradeSpinner"
-        android:layout_width="241dp"
-        android:layout_height="34dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.322" />
-
-    <TextView
-        android:id="@+id/classNumText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Class Number"
-        app:layout_constraintBottom_toTopOf="@+id/classNumSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.297"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <Spinner
-        android:id="@+id/classNumSpinner"
-        android:layout_width="241dp"
-        android:layout_height="34dp"
-        android:layoutDirection="rtl"
-        android:textDirection="rtl"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.414" />
-
-    <TextView
-        android:id="@+id/gradeNumText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Grade"
-        app:layout_constraintBottom_toTopOf="@+id/classNumSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.257"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.751" />
-
     <Button
-        android:id="@+id/button"
+        android:id="@+id/backBtnSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Back"
@@ -95,22 +48,70 @@
         app:layout_constraintVertical_bias="0.239" />
 
     <LinearLayout
-        android:id="@+id/collapsibleSettings"
-        android:layout_width="342dp"
-        android:layout_height="330dp"
+        android:id="@+id/profileSettings"
+        android:layout_width="329dp"
+        android:layout_height="394dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
-        app:barrierMargin="20dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.862">
+        app:layout_constraintVertical_bias="0.611">
+
+        <LinearLayout
+            android:id="@+id/gradeBox"
+            android:layout_width="319dp"
+            android:layout_height="58dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/gradeNumText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Grade"
+                android:visibility="visible"
+                tools:layout_editor_absoluteX="42dp"
+                tools:layout_editor_absoluteY="148dp" />
+
+            <Spinner
+                android:id="@+id/gradeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="34dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/classNumBox"
+            android:layout_width="315dp"
+            android:layout_height="68dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/classNumText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Class Number" />
+
+            <Spinner
+                android:id="@+id/classNumSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layoutDirection="rtl"
+                android:textDirection="rtl" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/majorsLayout"
-            android:layout_width="252dp"
-            android:layout_height="172dp"
+            android:layout_width="321dp"
+            android:layout_height="166dp"
             android:layout_gravity="center"
             android:orientation="vertical"
             android:visibility="visible">
@@ -165,20 +166,38 @@
 
         </LinearLayout>
 
-        <Switch
-            android:id="@+id/backgroundSyncSwitch"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/updateBtn"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0"
-            android:text="Run background sync service" />
+            android:text="Update Profile" />
 
-        <Switch
-            android:id="@+id/calendarSyncSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Sync calendar (needs calendar permisisons)" />
     </LinearLayout>
+
+    <Switch
+        android:id="@+id/backgroundSyncSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0"
+        android:text="Run background sync service"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.846" />
+
+    <Switch
+        android:id="@+id/calendarSyncSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Sync calendar (needs calendar permisisons)"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.42"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.911" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

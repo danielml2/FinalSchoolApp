@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -14,12 +15,13 @@ import java.util.stream.IntStream;
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.FilterProfile;
-import me.danielml.finalschoolapp.objects.Subject;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private Spinner gradeSpinner;
     private Spinner classNumSpinner;
+    private Button updateButton;
+    private Button backBtn;
 
     private ArrayAdapter<String> gradeAdapter;
     private ArrayAdapter<Integer> classNumAdapter;
@@ -51,6 +53,10 @@ public class SettingsActivity extends AppCompatActivity {
         classNumSpinner = findViewById(R.id.classNumSpinner);
         classNumAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, classNums);
         classNumSpinner.setAdapter(classNumAdapter);
+
+        updateButton = findViewById(R.id.updateBtn);
+        backBtn = findViewById(R.id.backBtnSettings);
+        backBtn.setOnClickListener((v) -> finish());
 
         majorsSelectUI = findViewById(R.id.majorsLayout);
 
