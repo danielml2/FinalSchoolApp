@@ -30,6 +30,7 @@ public class SplashScreen extends AppCompatActivity {
     private int dotsCount = 0;
     private FirebaseManager dbManager;
     private Intent mainScreen;
+    private boolean loading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +44,20 @@ public class SplashScreen extends AppCompatActivity {
 
 
         Timer timer = new Timer();
-//        timer.scheduleAtFixedRate(new TimerTask() {
-//            @SuppressLint("SetTextI18n")
-//            @Override
-//            public void run() {
-//                loadingText.setText("Arbitrary Load Screen commencing" + addDots(dotsCount));
-//                dotsCount += 1;
-//                dotsCount %= 5;
-//            }
-//        }, 0, 250);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void run() {
+                if(loading)
+                {
+                    loadingText.setText("Arbitrary Load Screen commencing" + addDots(dotsCount));
+                    dotsCount += 1;
+                    dotsCount %= 5;
+                } else {
+                    cancel();
+                }
+            }
+        }, 0, 250);
 
         if(!SyncService.SERVICE_RUNNING) {
             Intent intent = new Intent(this, SyncService.class);
@@ -89,10 +95,12 @@ public class SplashScreen extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             startActivity(mainScreen);
+                            loading = false;
                         });
                     } else {
                         Log.d("SchoolTests Sync", "Local data is up to date!");
                         startActivity(mainScreen);
+                        loading = false;
                     }
                 } catch (IOException | JSONException e) {
                     Log.e("SchoolTests Sync", "Failed loading local last updated. Exiting...");
