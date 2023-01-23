@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 import java.util.stream.IntStream;
 
@@ -24,6 +25,14 @@ public class SettingsActivity extends AppCompatActivity {
     private Spinner classNumSpinner;
     private Button updateButton;
     private Button backBtn;
+
+    private Button profileSettingsBtn;
+    private LinearLayout profileSettingsLayout;
+    private Button appSettingsBtn;
+    private LinearLayout appSettingsLayout;
+
+    private Switch calendarSyncSwitch;
+    private Switch syncServiceSwitch;
 
     private ArrayAdapter<String> gradeAdapter;
     private ArrayAdapter<Integer> classNumAdapter;
@@ -61,6 +70,15 @@ public class SettingsActivity extends AppCompatActivity {
         backBtn.setOnClickListener((v) -> finish());
 
         majorsSelectUI = findViewById(R.id.majorsLayout);
+        profileSettingsLayout = findViewById(R.id.profileSettings);
+        appSettingsLayout = findViewById(R.id.appSettings);
+
+        profileSettingsBtn = findViewById(R.id.profileSettingsBtn);
+        appSettingsBtn = findViewById(R.id.appSettingsBtn);
+        profileSettingsBtn.setOnClickListener((v) ->
+                profileSettingsLayout.setVisibility(profileSettingsLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
+        appSettingsBtn.setOnClickListener((v) ->
+                appSettingsLayout.setVisibility(appSettingsLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
 
         firebaseManager.getUserFilterProfile(this::updateUIWithProfile);
     }
@@ -109,9 +127,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
         updateButton.setOnClickListener((v) -> {
             int classNum = classNumSpinner.getSelectedItemPosition() + 1;
@@ -126,6 +142,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             firebaseManager.setUserFilterProfile(new FilterProfile(classNum, gradeNum, selectedMajorA, selectedMajorB));
         });
+
     }
 
 
