@@ -14,6 +14,8 @@ public enum Subject {
     private final String[] names;
 
     public static Subject from(String other) {
+        if(other == null)
+            return null;
 
         for(Subject s : values())
         {

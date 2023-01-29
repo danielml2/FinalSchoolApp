@@ -40,7 +40,7 @@ public class SyncService extends Service {
     private Notification notification;
     private long lastChecked;
 
-    private boolean autoUpdateCalendar = false;
+    private boolean shouldSyncCalendar = false;
     private CalendarManager calendarManager;
     private long calID = -1;
     private HandlerThread thread;
@@ -55,8 +55,8 @@ public class SyncService extends Service {
         thread.start();
         try {
             lastChecked = fileManager.getLastCheck();
-            autoUpdateCalendar = fileManager.getAutoUpdate();
-            if(autoUpdateCalendar)
+            shouldSyncCalendar = fileManager.isAutoSyncingCalendar();
+            if(shouldSyncCalendar)
             {
                 calID = fileManager.getCalendarID();
                 calendarManager.loadAvaliableCalendarIDs(getApplicationContext());
@@ -88,6 +88,7 @@ public class SyncService extends Service {
 
         Log.d("SchoolTests Sync (Background)", "Time since last update: " + timeSinceLastUpdate);
         Log.d("SchoolTests Sync (Background)", "Custom delay: " + customFirstDelay);
+        Log.d("SchoolTests Sync (Background)","Syncing Calendar: " + shouldSyncCalendar);
         Log.d("SchoolTests Sync (Background)", "Calendar ID stored: " + calID);
 
 
@@ -126,17 +127,17 @@ public class SyncService extends Service {
                             Log.d("SchoolTests Sync", "Saving database data locally...");
                             fileManager.saveDBDataLocally(lastUpdatedDB, tests);
                             Log.d("SchoolTests Sync (Background)", "Saved database data locally!");
-                            autoUpdateCalendar = fileManager.getAutoUpdate();
+                            shouldSyncCalendar = fileManager.isAutoSyncingCalendar();
                             calID = fileManager.getCalendarID();
                             Log.d("SchoolTests Sync (Background)", "Saved Calendar ID: " + calID);
-                            Log.d("SchoolTests Sync (Background)", "Auto update: " + autoUpdateCalendar);
+                            Log.d("SchoolTests Sync (Background)", "Auto update: " + shouldSyncCalendar);
 
-                            if(autoUpdateCalendar && calID != -1) {
+                            if(shouldSyncCalendar && calID != -1) {
                                 Log.d("SchoolTests Sync (Background)", "Updating calendar...");
                                 HashMap<String, Long> savedEventIDs = fileManager.getEventIDs();
                                 savedEventIDs = calendarManager.syncCalendarExport(tests, getApplicationContext(), calID, savedEventIDs);
                                 fileManager.saveEventIDs(savedEventIDs);
-                            } else if(autoUpdateCalendar && calID == -1) {
+                            } else if(shouldSyncCalendar && calID == -1) {
                                 Log.e("SchoolTests Sync (Background)", "Invalid calendar ID!");
                             }
 

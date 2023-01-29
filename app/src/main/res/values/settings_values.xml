@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gradeNames">
+        <item>ז</item>
+        <item>ח</item>
+        <item>ט</item>
+        <item>י</item>
+        <item>י"א</item>
+        <item>י"ב</item>
+    </string-array>
+    <integer-array name="classNums">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </integer-array>
+    <string-array name="majorsNames">
+        <item>פיזיקה</item>
+        <item>מדעי המחשב</item>
+        <item>בילוגיה</item>
+        <item>כימיה</item>
+        <item>פילוסופיה</item>
+        <item>ספרות</item>
+        <item>ספורט</item>
+        <item>תיאטרון</item>
+        <item>ערבית</item>
+        <item>גיאוגרפיה</item>
+        <item>מדעי החברה</item>
+        <item>תקשורת</item>
+    </string-array>
+</resources>

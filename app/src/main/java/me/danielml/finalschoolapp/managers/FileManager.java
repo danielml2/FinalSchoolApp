@@ -164,15 +164,44 @@ public class FileManager {
         return obj.has("calID") ? obj.getLong("calID") : -1;
     }
 
-    public boolean getAutoUpdate() throws FileNotFoundException, JSONException {
-        JSONObject obj = getJSONObject("preferences");
-        return obj.has("autoUpdate") && obj.getBoolean("autoUpdate");
+    public boolean isAutoSyncingCalendar() {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            return obj.has("calendarAutoSync") && obj.getBoolean("calendarAutoSync");
+        } catch (IOException | JSONException exception) {
+            return false;
+        }
     }
 
-    public void saveAutoUpdate(boolean autoUpdate) throws IOException, JSONException {
-        JSONObject obj = getJSONObject("preferences");
-        obj.put("autoUpdate", autoUpdate);
-        writeJSON("preferences", obj);
+    public void saveCalendarAutoSync(boolean calendarAutoSync)  {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            obj.put("calendarAutoSync", calendarAutoSync);
+            writeJSON("preferences", obj);
+        } catch (IOException | JSONException exception) {
+            Log.e("SchoolTests", "Saving calendar auto sync setting failed!");
+            exception.printStackTrace();
+        }
+    }
+
+    public boolean isSyncServiceEnabled() {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            return obj.has("syncService") && obj.getBoolean("syncService");
+        } catch (IOException | JSONException exception) {
+            return false;
+        }
+    }
+
+    public void saveSyncService(boolean syncServiceEnabled) {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            obj.put("syncService", syncServiceEnabled);
+            writeJSON("preferences", obj);
+        } catch (IOException | JSONException exception) {
+            Log.e("SchoolTests", "Saving sync service setting failed!");
+            exception.printStackTrace();
+        }
     }
 
 }
