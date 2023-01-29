@@ -175,4 +175,15 @@ public class FileManager {
         writeJSON("preferences", obj);
     }
 
+    public boolean isSyncServiceEnabled() throws FileNotFoundException, JSONException  {
+        JSONObject obj = getJSONObject("preferences");
+        return obj.has("syncService") && obj.getBoolean("syncService");
+    }
+
+    public void saveSyncService(boolean syncServiceEnabled) throws IOException, JSONException{
+        JSONObject obj = getJSONObject("preferences");
+        obj.put("calendarAutoSync", syncServiceEnabled);
+        writeJSON("preferences", obj);
+    }
+
 }
