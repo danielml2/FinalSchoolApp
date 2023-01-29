@@ -44,7 +44,7 @@
         android:id="@+id/autoUpdateBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Auto update calendar in background"
+        android:text="Auto update calendar in background (Requires Sync Service enabled in settings)"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.466"

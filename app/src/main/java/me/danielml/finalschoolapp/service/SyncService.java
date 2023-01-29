@@ -88,6 +88,7 @@ public class SyncService extends Service {
 
         Log.d("SchoolTests Sync (Background)", "Time since last update: " + timeSinceLastUpdate);
         Log.d("SchoolTests Sync (Background)", "Custom delay: " + customFirstDelay);
+        Log.d("SchoolTests Sync (Background)","Syncing Calendar: " + shouldSyncCalendar);
         Log.d("SchoolTests Sync (Background)", "Calendar ID stored: " + calID);
 
 

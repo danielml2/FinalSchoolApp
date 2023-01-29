@@ -209,7 +209,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Sync calendar (needs calendar permisisons)" />
+                android:text="Sync calendar in background (needs calendar permisisons)" />
+
+            <Button
+                android:id="@+id/updateAppSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Apply App Settings" />
         </LinearLayout>
 
     </LinearLayout>

@@ -29,6 +29,8 @@ public class SplashScreen extends AppCompatActivity {
 
     private int dotsCount = 0;
     private FirebaseManager dbManager;
+    private FileManager fileManager;
+
     private Intent mainScreen;
     private boolean loading = true;
 
@@ -39,6 +41,7 @@ public class SplashScreen extends AppCompatActivity {
 
         TextView loadingText = findViewById(R.id.loadingText);
         dbManager = new FirebaseManager();
+        fileManager = new FileManager(getApplicationContext().getFilesDir());
         mainScreen = new Intent(this, MainActivity.class);
 
 
@@ -59,11 +62,11 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 0, 250);
 
-        if(!SyncService.SERVICE_RUNNING) {
+        if(!SyncService.SERVICE_RUNNING && fileManager.isSyncServiceEnabled()) {
             Intent intent = new Intent(this, SyncService.class);
             startForegroundService(intent);
         } else {
-            Log.d("SchoolTests", "Service is already running!");
+            Log.d("SchoolTests", "Service is already running or is not enabled");
         }
         syncDataAndSignIn();
     }
@@ -78,7 +81,6 @@ public class SplashScreen extends AppCompatActivity {
         if(!dbManager.isSignedIn())
             startActivity(new Intent(this, UserLoginActivity.class));
         else {
-            FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
             dbManager.getLastUpdatedTime((lastUpdatedDB) -> {
                 try {
                     long localLastUpdate = fileManager.getLocalLastUpdated();

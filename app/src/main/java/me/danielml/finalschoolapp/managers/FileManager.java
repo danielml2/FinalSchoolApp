@@ -164,26 +164,44 @@ public class FileManager {
         return obj.has("calID") ? obj.getLong("calID") : -1;
     }
 
-    public boolean isAutoSyncingCalendar() throws FileNotFoundException, JSONException {
-        JSONObject obj = getJSONObject("preferences");
-        return obj.has("calendarAutoSync") && obj.getBoolean("calendarAutoSync");
+    public boolean isAutoSyncingCalendar() {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            return obj.has("calendarAutoSync") && obj.getBoolean("calendarAutoSync");
+        } catch (IOException | JSONException exception) {
+            return false;
+        }
     }
 
-    public void saveCalendarAutoSync(boolean calendarAutoSync) throws IOException, JSONException {
-        JSONObject obj = getJSONObject("preferences");
-        obj.put("calendarAutoSync", calendarAutoSync);
-        writeJSON("preferences", obj);
+    public void saveCalendarAutoSync(boolean calendarAutoSync)  {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            obj.put("calendarAutoSync", calendarAutoSync);
+            writeJSON("preferences", obj);
+        } catch (IOException | JSONException exception) {
+            Log.e("SchoolTests", "Saving calendar auto sync setting failed!");
+            exception.printStackTrace();
+        }
     }
 
-    public boolean isSyncServiceEnabled() throws FileNotFoundException, JSONException  {
-        JSONObject obj = getJSONObject("preferences");
-        return obj.has("syncService") && obj.getBoolean("syncService");
+    public boolean isSyncServiceEnabled() {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            return obj.has("syncService") && obj.getBoolean("syncService");
+        } catch (IOException | JSONException exception) {
+            return false;
+        }
     }
 
-    public void saveSyncService(boolean syncServiceEnabled) throws IOException, JSONException{
-        JSONObject obj = getJSONObject("preferences");
-        obj.put("calendarAutoSync", syncServiceEnabled);
-        writeJSON("preferences", obj);
+    public void saveSyncService(boolean syncServiceEnabled) {
+        try {
+            JSONObject obj = getJSONObject("preferences");
+            obj.put("syncService", syncServiceEnabled);
+            writeJSON("preferences", obj);
+        } catch (IOException | JSONException exception) {
+            Log.e("SchoolTests", "Saving sync service setting failed!");
+            exception.printStackTrace();
+        }
     }
 
 }

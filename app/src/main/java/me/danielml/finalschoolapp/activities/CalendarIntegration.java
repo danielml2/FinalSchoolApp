@@ -113,11 +113,7 @@ public class CalendarIntegration extends AppCompatActivity {
         });
         autoUpdateBtn.setOnCheckedChangeListener((btn, checked) -> {
             Log.d("SchoolTests", "Auto update: " + checked);
-            try {
-                fileManager.saveCalendarAutoSync(checked);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
+            fileManager.saveCalendarAutoSync(checked);
         });
         }
 
