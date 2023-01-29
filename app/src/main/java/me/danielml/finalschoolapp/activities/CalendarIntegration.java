@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
@@ -63,17 +62,17 @@ public class CalendarIntegration extends AppCompatActivity {
 
         FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
         savedCalName = null;
-        boolean autoUpdate = false;
+        boolean calendarAutoSync = false;
         try {
             long calID = fileManager.getCalendarID();
             savedCalName = manager.getNameFromID(calID);
-            autoUpdate = fileManager.getAutoUpdate();
+            calendarAutoSync = fileManager.isAutoSyncingCalendar();
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
         }
 
 
-        autoUpdateBtn.setChecked(autoUpdate);
+        autoUpdateBtn.setChecked(calendarAutoSync);
         selectAdapter = new ArrayAdapter<>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
@@ -106,7 +105,7 @@ public class CalendarIntegration extends AppCompatActivity {
                 Log.d("SchoolTests", "New calendar ID: " + manager.getIDFromName(selectedCalendar));
                 Log.d("SchoolTests", "Saved test event IDs count: " + fileManager.getEventIDs().size());
 
-                fileManager.saveAutoUpdate(autoUpdateBtn.isChecked());
+                fileManager.saveCalendarAutoSync(autoUpdateBtn.isChecked());
             } catch (IOException | JSONException exception) {
                 Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
                 exception.printStackTrace();
@@ -115,7 +114,7 @@ public class CalendarIntegration extends AppCompatActivity {
         autoUpdateBtn.setOnCheckedChangeListener((btn, checked) -> {
             Log.d("SchoolTests", "Auto update: " + checked);
             try {
-                fileManager.saveAutoUpdate(checked);
+                fileManager.saveCalendarAutoSync(checked);
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }

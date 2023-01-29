@@ -164,14 +164,14 @@ public class FileManager {
         return obj.has("calID") ? obj.getLong("calID") : -1;
     }
 
-    public boolean getAutoUpdate() throws FileNotFoundException, JSONException {
+    public boolean isAutoSyncingCalendar() throws FileNotFoundException, JSONException {
         JSONObject obj = getJSONObject("preferences");
-        return obj.has("autoUpdate") && obj.getBoolean("autoUpdate");
+        return obj.has("calendarAutoSync") && obj.getBoolean("calendarAutoSync");
     }
 
-    public void saveAutoUpdate(boolean autoUpdate) throws IOException, JSONException {
+    public void saveCalendarAutoSync(boolean calendarAutoSync) throws IOException, JSONException {
         JSONObject obj = getJSONObject("preferences");
-        obj.put("autoUpdate", autoUpdate);
+        obj.put("calendarAutoSync", calendarAutoSync);
         writeJSON("preferences", obj);
     }
 
