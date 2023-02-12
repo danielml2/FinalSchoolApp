@@ -1,5 +1,7 @@
 package me.danielml.finalschoolapp.objects;
 
+import java.util.Arrays;
+
 public class FilterProfile {
 
     public static final FilterProfile NULL_FALLBACK = new FilterProfile(1, 7, null, null);
@@ -30,5 +32,32 @@ public class FilterProfile {
 
     public Subject getMajorB() {
         return majorB;
+    }
+
+    public boolean doesPassFilter(Test test, String[] majorNames) {
+        boolean classNumCheck = test.getClassNums().contains(-1) || test.getClassNums().contains(classNum);
+        if(!classNumCheck || test.getGradeNum() != gradeNum)
+            return false;
+
+        boolean subjectCheck = Arrays.stream(majorNames).noneMatch(subjectName -> subjectName.equals(test.getSubject().getDefaultName()) || Subject.from(subjectName).equals(test.getSubject()));
+        if(subjectCheck)
+            return true;
+        subjectCheck = test.getSubject().equals(majorA) || test.getSubject().equals(majorB) || test.getSubject().equals(Subject.MAGAMOT_A) || test.getSubject().equals(Subject.MAGAMOT_B);
+
+        return subjectCheck;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FilterProfile that = (FilterProfile) o;
+
+        if (classNum != that.classNum) return false;
+        if (gradeNum != that.gradeNum) return false;
+        if (majorA != that.majorA) return false;
+        return majorB == that.majorB;
     }
 }
