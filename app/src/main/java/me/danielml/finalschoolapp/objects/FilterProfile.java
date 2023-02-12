@@ -2,6 +2,8 @@ package me.danielml.finalschoolapp.objects;
 
 public class FilterProfile {
 
+    public static final FilterProfile NULL_FALLBACK = new FilterProfile(1, 7, null, null);
+
     private final int classNum;
     private final int gradeNum;
     private final Subject majorA;

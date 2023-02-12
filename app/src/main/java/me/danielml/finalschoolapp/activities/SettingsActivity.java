@@ -131,6 +131,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void updateUIWithProfile(FilterProfile profile) {
+        if(profile == null)
+            profile = FilterProfile.NULL_FALLBACK;
 
         gradeSpinner = findViewById(R.id.gradeSpinner);
         gradeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gradeNames);
