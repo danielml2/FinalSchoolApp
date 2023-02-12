@@ -68,7 +68,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         setupCategoryButtonsUI();
 
-        setupAppSettingsUI();
+        Intent intent = getIntent();
+        boolean openAppSettings = false;
+        if(intent != null)
+        {
+            Bundle extras = intent.getExtras();
+
+            openAppSettings = extras != null && extras.containsKey("openAppSettings") && extras.getBoolean("openAppSettings");
+        }
+        setupAppSettingsUI(openAppSettings);
 
         setupProfileSettingsUI();
     }
@@ -87,7 +95,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    public void setupAppSettingsUI()  {
+    public void setupAppSettingsUI(boolean openAppSettings)  {
         calendarSyncSwitch = findViewById(R.id.calendarSyncSwitch);
         syncServiceSwitch = findViewById(R.id.backgroundSyncSwitch);
 
@@ -115,6 +123,9 @@ public class SettingsActivity extends AppCompatActivity {
                 calendarSyncSwitch.setChecked(false);
             }
         });
+
+        if(openAppSettings)
+            appSettingsLayout.setVisibility(View.VISIBLE);
 
 
         updateAppSettings = findViewById(R.id.updateAppSettings);

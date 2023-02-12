@@ -4,11 +4,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,7 +29,7 @@ public class CalendarIntegration extends AppCompatActivity {
     private ArrayAdapter<String> selectAdapter;
 
     private Button updateButton;
-    private CheckBox autoUpdateBtn;
+    private Button jumpToSettingsBtn;
 
     private String savedCalName;
 
@@ -40,7 +40,7 @@ public class CalendarIntegration extends AppCompatActivity {
 
         calendarSelect = findViewById(R.id.calendarSelect);
         updateButton = findViewById(R.id.exportToCalendarButton);
-        autoUpdateBtn = findViewById(R.id.autoUpdateBox);
+        jumpToSettingsBtn = findViewById(R.id.settingsJmpBtn);
 
         registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (grantedPermissionMap) -> {
             boolean allowedPermissions = grantedPermissionMap.values().stream().allMatch((Boolean::booleanValue));
@@ -62,17 +62,20 @@ public class CalendarIntegration extends AppCompatActivity {
 
         FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
         savedCalName = null;
-        boolean calendarAutoSync = false;
         try {
             long calID = fileManager.getCalendarID();
             savedCalName = manager.getNameFromID(calID);
-            calendarAutoSync = fileManager.isAutoSyncingCalendar();
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
         }
 
 
-        autoUpdateBtn.setChecked(calendarAutoSync);
+        jumpToSettingsBtn.setOnClickListener((v) -> {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            intent.putExtra("openAppSettings", true);
+            startActivity(intent);
+
+        });
         selectAdapter = new ArrayAdapter<>(this.getBaseContext(), R.layout.spinner_item, new ArrayList<>(manager.availableCalendarNames()));
         selectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         calendarSelect.setAdapter(selectAdapter);
@@ -105,16 +108,12 @@ public class CalendarIntegration extends AppCompatActivity {
                 Log.d("SchoolTests", "New calendar ID: " + manager.getIDFromName(selectedCalendar));
                 Log.d("SchoolTests", "Saved test event IDs count: " + fileManager.getEventIDs().size());
 
-                fileManager.saveCalendarAutoSync(autoUpdateBtn.isChecked());
             } catch (IOException | JSONException exception) {
                 Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
                 exception.printStackTrace();
             }
         });
-        autoUpdateBtn.setOnCheckedChangeListener((btn, checked) -> {
-            Log.d("SchoolTests", "Auto update: " + checked);
-            fileManager.saveCalendarAutoSync(checked);
-        });
+
         }
 
 
