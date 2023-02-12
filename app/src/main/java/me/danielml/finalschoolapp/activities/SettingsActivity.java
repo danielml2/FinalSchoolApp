@@ -96,10 +96,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         calendarSyncSwitch.setChecked(syncServiceOn && calendarSync);
         syncServiceSwitch.setChecked(syncServiceOn);
+        if(!(syncServiceOn && calendarSync))
+        {
+            fileManager.saveCalendarAutoSync(false);
+        }
 
-        if(calendarSync && !syncServiceOn)
-            Toast.makeText(this,"You have calendar auto-sync on, but not the sync service - to use the calendar sync - enable the sync service AND calendar sync" , Toast.LENGTH_LONG).show();
+        syncServiceSwitch.setOnCheckedChangeListener((v, checked) -> {
+            if(!checked && calendarSyncSwitch.isChecked())
+            {
+                calendarSyncSwitch.setChecked(false);
+            }
 
+        });
         calendarSyncSwitch.setOnCheckedChangeListener((v, checked) -> {
             if(!syncServiceSwitch.isChecked())
             {
