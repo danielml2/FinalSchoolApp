@@ -168,6 +168,8 @@ public class FileManager {
     public boolean isAutoSyncingCalendar() {
         try {
             JSONObject obj = getJSONObject("preferences");
+            if(!obj.has("calendarAutoSync"))
+                return false;
             return obj.getBoolean("calendarAutoSync");
         } catch (IOException | JSONException exception) {
             return false;
@@ -188,6 +190,8 @@ public class FileManager {
     public boolean isSyncServiceEnabled() {
         try {
             JSONObject obj = getJSONObject("preferences");
+            if(!obj.has("syncService"))
+                return false;
             return obj.getBoolean("syncService");
         } catch (IOException | JSONException exception) {
             return false;

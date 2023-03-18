@@ -1,8 +1,12 @@
 package me.danielml.finalschoolapp.activities;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +18,9 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.io.FileNotFoundException;
 import java.util.stream.IntStream;
 
 import me.danielml.finalschoolapp.R;
@@ -116,11 +123,35 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
         });
-        calendarSyncSwitch.setOnCheckedChangeListener((v, checked) -> {
-            if(!syncServiceSwitch.isChecked())
-            {
-                Toast.makeText(this, "Sync service must be on for calendar auto-syncing!", Toast.LENGTH_SHORT).show();
+
+        ActivityResultLauncher<String[]> requestPermissionsLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (grantedPermissionMap) -> {
+            boolean allowedPermissions = grantedPermissionMap.values().stream().allMatch((Boolean::booleanValue));
+            if(!allowedPermissions){
+                Toast.makeText(this, "Calendar integration needs calendar permissions in order to work!", Toast.LENGTH_SHORT).show();
                 calendarSyncSwitch.setChecked(false);
+            }
+            else
+                calendarSyncSwitch.setChecked(true);
+
+        });
+
+        calendarSyncSwitch.setOnCheckedChangeListener((v, checked) -> {
+            if(checked) {
+                if (!checkCalendarPermissions()) {
+                    Toast.makeText(this, "Calendar permissions must be enabled for this to work!", Toast.LENGTH_LONG).show();
+                    calendarSyncSwitch.setChecked(false);
+
+                    requestPermissionsLauncher.launch(new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR});
+                }
+                if (!syncServiceSwitch.isChecked()) {
+                    Toast.makeText(this, "Sync service must be on for calendar auto-syncing!", Toast.LENGTH_SHORT).show();
+                    calendarSyncSwitch.setChecked(false);
+                }
+                try {
+                    if (fileManager.getCalendarID() == -1)
+                        Toast.makeText(this, "No Calendar ID was set. Go to the calendar settings to change that", Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException | JSONException ignored) {
+                }
             }
         });
 
@@ -225,6 +256,14 @@ public class SettingsActivity extends AppCompatActivity {
             firebaseManager.setUserFilterProfile(newProfile);
         });
 
+    }
+
+    public boolean checkCalendarPermissions() {
+        int writePermission = checkSelfPermission(Manifest.permission.WRITE_CALENDAR);
+
+        int readPermission = checkSelfPermission(Manifest.permission.READ_CALENDAR);
+
+        return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED;
     }
 
 
