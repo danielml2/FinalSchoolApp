@@ -83,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
         calendarMenu.setOnClickListener((v) -> startActivity(new Intent(this, CalendarIntegration.class)));
         settingsBtn.setOnClickListener((v) -> startActivity(new Intent(this, SettingsActivity.class)));
+
+        if(!SyncService.SERVICE_RUNNING && fileManager.isSyncServiceEnabled()) {
+            Intent intent = new Intent(this, SyncService.class);
+            startForegroundService(intent);
+        } else {
+            Log.d("SchoolTests", "Service is already running or is not enabled");
+        }
     }
 
     public View buildView(Test test) {

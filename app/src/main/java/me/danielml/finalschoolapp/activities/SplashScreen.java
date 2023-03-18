@@ -61,13 +61,6 @@ public class SplashScreen extends AppCompatActivity {
                 }
             }
         }, 0, 250);
-
-        if(!SyncService.SERVICE_RUNNING && fileManager.isSyncServiceEnabled()) {
-            Intent intent = new Intent(this, SyncService.class);
-            startForegroundService(intent);
-        } else {
-            Log.d("SchoolTests", "Service is already running or is not enabled");
-        }
         syncDataAndSignIn();
     }
 

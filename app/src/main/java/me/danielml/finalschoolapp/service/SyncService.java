@@ -22,6 +22,7 @@ import org.json.JSONException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,7 +45,9 @@ public class SyncService extends Service {
     private FirebaseManager firebaseManager;
 
     private Notification notification;
+    private int notificationID = 1;
     private long lastChecked;
+    private long nextSync;
 
     private boolean shouldSyncCalendar = false;
     private CalendarManager calendarManager;
@@ -87,8 +90,8 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        notification = staticRunningNotification();
-        startForeground(1, notification);
+        notification = getStaticNotification();
+        startForeground(notificationID, notification);
         Message msg = syncHandler.obtainMessage();
         msg.arg1 = startId;
         syncHandler.sendEmptyMessage(0);
@@ -102,15 +105,16 @@ public class SyncService extends Service {
         Log.d("SchoolTests Sync (Background)","Syncing Calendar: " + shouldSyncCalendar);
         Log.d("SchoolTests Sync (Background)", "Calendar ID stored: " + calID);
 
-
         if(!SERVICE_RUNNING) {
             syncHandler.post(() -> {
                 boolean firstRun = customFirstDelay;
                 SERVICE_RUNNING = true;
-            while(SERVICE_RUNNING)
-            {
+                while(SERVICE_RUNNING)
+                {
                 try {
                     Log.d("SchoolTests Sync (Background) ", "Waiting on service delay...");
+                    nextSync = System.currentTimeMillis() + (firstRun ? customDelay : DELAY);
+                    updateNotification();
                     Thread.sleep(firstRun ? customDelay : DELAY);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -122,7 +126,6 @@ public class SyncService extends Service {
             Log.d("SchoolTests Sync (Background) ", "Background Sync Loop terminated");
         });
         }
-
         return START_STICKY;
     }
 
@@ -181,7 +184,7 @@ public class SyncService extends Service {
         return null;
     }
 
-    public Notification staticRunningNotification() {
+    public Notification getStaticNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "SchoolTests");
 
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -196,8 +199,9 @@ public class SyncService extends Service {
         endIntent.putExtra("endService",true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, endIntent, 0);
 
-        return builder.setContentTitle("yeah")
-                .setContentText("beep boop")
+        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        return builder.setContentTitle("SchoolTests | Background Sync")
+                .setContentText("Last check: " + dateFormat.format(lastChecked) + "\n Next check: " + dateFormat.format(nextSync))
                 .addAction(R.mipmap.ic_launcher, "End Service", pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
@@ -211,6 +215,12 @@ public class SyncService extends Service {
         thread.quitSafely();
         stopSelf();
         stopForeground(true);
+    }
+
+    public void updateNotification() {
+        NotificationManager manager = getSystemService(NotificationManager.class);
+
+        manager.notify(notificationID, getStaticNotification());
     }
 
     public static void setFilterProfile(FilterProfile filterProfile) {

@@ -42,6 +42,8 @@ public class FirebaseManager {
     }
 
     public void getUserFilterProfile(Consumer<FilterProfile> profileCallback) {
+        if(!isSignedIn())
+            profileCallback.accept(FilterProfile.NULL_FALLBACK);
         String userID = authentication.getCurrentUser().getUid();
 
         database.getReference()
