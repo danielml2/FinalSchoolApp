@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#263238"
     tools:context=".activities.CalendarIntegration">
 
     <Button
@@ -18,9 +19,11 @@
         app:layout_constraintVertical_bias="0.653" />
 
     <Spinner
+        android:textColor="#FFFFFF"
         android:id="@+id/calendarSelect"
         android:layout_width="270dp"
         android:layout_height="37dp"
+        android:backgroundTint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
@@ -33,6 +36,7 @@
         android:layout_width="210dp"
         android:layout_height="31dp"
         android:text="Select a calendar"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.348"
@@ -60,6 +64,7 @@
         android:layout_height="41dp"
         android:layout_marginEnd="84dp"
         android:text="Want to enable auto sync in the background?"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.146"

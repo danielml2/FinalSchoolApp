@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#263238"
     tools:context=".activities.SplashScreen">
 
     <TextView
@@ -12,6 +13,7 @@
         android:layout_height="35dp"
         android:text="Arbitrary Load Screen commencing..."
         android:textAlignment="center"
+        android:textColor="#FFFFFF"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

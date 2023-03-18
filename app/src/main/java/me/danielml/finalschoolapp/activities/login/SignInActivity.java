@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,14 +34,14 @@ public class SignInActivity extends AppCompatActivity {
         signInSubmit.setOnClickListener((v) -> {
             String email = emailInput.getText().toString();
             String password = passwordInput.getText().toString();
-
-            fbManager.signIn(email, password, (user) -> {
-                Toast.makeText(this, "Welcome back, " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, SplashScreen.class));
-            }, (exception) -> {
-                exception.printStackTrace();
-                Toast.makeText(this, "Failed to sign in! (" + exception.getCause() + ")", Toast.LENGTH_SHORT).show();
-            });
+            if(!email.isEmpty() && !password.isEmpty())
+                fbManager.signIn(email, password, (user) -> {
+                    Toast.makeText(this, "Welcome back, " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, SplashScreen.class));
+                }, (exception) -> {
+                    exception.printStackTrace();
+                    Toast.makeText(this, "Failed to sign in! (" + exception.getMessage() + ")", Toast.LENGTH_SHORT).show();
+                });
         });
 
     }

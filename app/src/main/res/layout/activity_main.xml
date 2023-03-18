@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#263238"
     tools:context=".activities.MainActivity">
 
     <Button
@@ -24,6 +25,7 @@
         android:layout_height="46dp"
         android:text="SchoolTests"
         android:textAlignment="center"
+        android:textColor="#FFFFFF"
         android:textSize="30dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -37,6 +39,8 @@
         android:layout_width="347dp"
         android:layout_height="24dp"
         android:text="עודכן לאחרונה ב"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"

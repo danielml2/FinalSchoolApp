@@ -185,11 +185,11 @@ public class SettingsActivity extends AppCompatActivity {
             profile = FilterProfile.NULL_FALLBACK;
 
         gradeSpinner = findViewById(R.id.gradeSpinner);
-        gradeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gradeNames);
+        gradeAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, gradeNames);
         gradeSpinner.setAdapter(gradeAdapter);
 
         classNumSpinner = findViewById(R.id.classNumSpinner);
-        classNumAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, classNums);
+        classNumAdapter = new ArrayAdapter<Integer>(this, R.layout.spinner_item, classNums);
         classNumSpinner.setAdapter(classNumAdapter);
 
         updateProfileBtn = findViewById(R.id.updateBtn);
@@ -205,8 +205,8 @@ public class SettingsActivity extends AppCompatActivity {
         majorsBSpinner = findViewById(R.id.majorBSpinner);
 
         String[] majors = getResources().getStringArray(R.array.majorsNames);
-        majorsAdapterA = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, majors);
-        majorsAdapterB = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, majors);
+        majorsAdapterA = new ArrayAdapter<String>(this, R.layout.spinner_item, majors);
+        majorsAdapterB = new ArrayAdapter<String>(this, R.layout.spinner_item, majors);
 
         majorsASpinner.setAdapter(majorsAdapterA);
         majorsBSpinner.setAdapter(majorsAdapterB);

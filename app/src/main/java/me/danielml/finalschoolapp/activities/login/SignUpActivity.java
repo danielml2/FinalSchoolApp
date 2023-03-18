@@ -51,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
                     if(exception instanceof FirebaseAuthUserCollisionException)
                         Toast.makeText(this, "Email already exists! ", Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(this, "Failed to sign up! (" + exception.getCause() + ")", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to sign up! (" + exception.getMessage() + ")", Toast.LENGTH_SHORT).show();
                 });
             }
         });

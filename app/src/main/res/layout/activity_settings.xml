@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#263238"
     android:visibility="visible"
     tools:context=".activities.SettingsActivity">
 
@@ -25,6 +26,7 @@
         android:layout_height="33dp"
         android:text="Settings"
         android:textAlignment="center"
+        android:textColor="#FFFFFF"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +54,8 @@
             android:background="@color/fui_transparent"
             android:text="Profile"
             android:textAlignment="center"
-            android:textColor="#000000" />
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF" />
 
         <LinearLayout
             android:id="@+id/profileSettings"
@@ -79,6 +82,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Grade"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF"
                     android:visibility="visible"
                     tools:layout_editor_absoluteX="42dp"
                     tools:layout_editor_absoluteY="148dp" />
@@ -86,7 +91,10 @@
                 <Spinner
                     android:id="@+id/gradeSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="34dp" />
+                    android:textColor="#FFFFFF"
+                    android:popupBackground="#34444d"
+                    android:layout_height="34dp"
+                    android:backgroundTint="#FFFFFF" />
             </LinearLayout>
 
             <LinearLayout
@@ -101,12 +109,16 @@
                     android:id="@+id/classNumText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Class Number" />
+                    android:text="Class Number"
+                    android:textColor="#FFFFFF" />
 
                 <Spinner
                     android:id="@+id/classNumSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#FFFFFF"
+                    android:popupBackground="#34444d"
                     android:layoutDirection="rtl"
                     android:textDirection="rtl" />
             </LinearLayout>
@@ -124,6 +136,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Major A"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF"
                     app:layout_constraintBottom_toTopOf="@+id/classNumSpinner"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.257"
@@ -137,6 +151,9 @@
                     android:layout_height="34dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="30dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:popupBackground="#34444d"
+                    android:textColor="#FFFFFF"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.535"
@@ -149,6 +166,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Major B"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF"
                     app:layout_constraintBottom_toTopOf="@+id/classNumSpinner"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.257"
@@ -160,6 +179,9 @@
                     android:id="@+id/majorBSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="34dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:popupBackground="#34444d"
+                    android:textColor="#FFFFFF"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.535"
@@ -187,7 +209,7 @@
             android:background="@color/fui_transparent"
             android:text="General App Settings"
             android:textAlignment="center"
-            android:textColor="#000000" />
+            android:textColor="#FFFFFF" />
 
         <LinearLayout
             android:id="@+id/appSettings"
@@ -202,14 +224,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="0"
-                android:text="Run background sync service" />
+                android:text="Run background sync service"
+                android:textColor="#FFFFFF" />
 
             <Switch
                 android:id="@+id/calendarSyncSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Sync calendar in background (needs calendar permisisons)" />
+                android:text="Sync calendar in background (needs calendar permisisons)"
+                android:textColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/updateAppSettings"
