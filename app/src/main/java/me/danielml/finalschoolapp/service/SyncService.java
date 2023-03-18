@@ -1,11 +1,13 @@
 package me.danielml.finalschoolapp.service;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -21,11 +23,15 @@ import org.json.JSONException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
+import me.danielml.finalschoolapp.objects.FilterProfile;
+import me.danielml.finalschoolapp.objects.Test;
 
 public class SyncService extends Service {
 
@@ -45,6 +51,8 @@ public class SyncService extends Service {
     private long calID = -1;
     private HandlerThread thread;
 
+    private static FilterProfile filterProfile;
+
     @Override
     public void onCreate() {
         thread = new HandlerThread("SchoolTestsSync", Process.THREAD_PRIORITY_BACKGROUND);
@@ -53,22 +61,25 @@ public class SyncService extends Service {
         calendarManager = new CalendarManager();
 
         thread.start();
+
         try {
             lastChecked = fileManager.getLastCheck();
             shouldSyncCalendar = fileManager.isAutoSyncingCalendar();
-            if(shouldSyncCalendar)
+            if(shouldSyncCalendar && checkCalendarPermissions())
             {
                 calID = fileManager.getCalendarID();
+
                 calendarManager.loadAvaliableCalendarIDs(getApplicationContext());
 
                 calID = calendarManager.doesCalendarExist(calID, getApplicationContext()) ? calID : -1;
             }
+            firebaseManager.getUserFilterProfile(SyncService::setFilterProfile);
         } catch (FileNotFoundException | JSONException e) {
             e.printStackTrace();
         }
         serviceLooper = thread.getLooper();
 
-
+        Log.d("SchoolTests", "Permissions: " + checkCalendarPermissions());
         syncHandler = new Handler(serviceLooper);
     }
 
@@ -131,11 +142,14 @@ public class SyncService extends Service {
                             calID = fileManager.getCalendarID();
                             Log.d("SchoolTests Sync (Background)", "Saved Calendar ID: " + calID);
                             Log.d("SchoolTests Sync (Background)", "Auto update: " + shouldSyncCalendar);
-
-                            if(shouldSyncCalendar && calID != -1) {
+                            Log.d("SchoolTests", "Permissions: " + checkCalendarPermissions());
+                            if(shouldSyncCalendar && calID != -1 && checkCalendarPermissions()) {
+                                List<Test> calendarTests = tests;
+                                if(filterProfile != null)
+                                    calendarTests = calendarTests.stream().filter(filterProfile::doesPassFilter).collect(Collectors.toList());
                                 Log.d("SchoolTests Sync (Background)", "Updating calendar...");
                                 HashMap<String, Long> savedEventIDs = fileManager.getEventIDs();
-                                savedEventIDs = calendarManager.syncCalendarExport(tests, getApplicationContext(), calID, savedEventIDs);
+                                savedEventIDs = calendarManager.syncCalendarExport(calendarTests, getApplicationContext(), calID, savedEventIDs);
                                 fileManager.saveEventIDs(savedEventIDs);
                             } else if(shouldSyncCalendar && calID == -1) {
                                 Log.e("SchoolTests Sync (Background)", "Invalid calendar ID!");
@@ -197,5 +211,17 @@ public class SyncService extends Service {
         thread.quitSafely();
         stopSelf();
         stopForeground(true);
+    }
+
+    public static void setFilterProfile(FilterProfile filterProfile) {
+        SyncService.filterProfile = filterProfile;
+    }
+
+    public boolean checkCalendarPermissions() {
+        int writePermission = checkSelfPermission(Manifest.permission.WRITE_CALENDAR);
+
+        int readPermission = checkSelfPermission(Manifest.permission.READ_CALENDAR);
+
+        return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED;
     }
 }

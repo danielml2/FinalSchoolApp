@@ -18,10 +18,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
+import me.danielml.finalschoolapp.managers.FirebaseManager;
+import me.danielml.finalschoolapp.objects.FilterProfile;
+import me.danielml.finalschoolapp.objects.Test;
 
 public class CalendarIntegration extends AppCompatActivity {
 
@@ -31,6 +36,7 @@ public class CalendarIntegration extends AppCompatActivity {
     private Button updateButton;
     private Button jumpToSettingsBtn;
 
+    private FilterProfile filterProfile;
     private String savedCalName;
 
     @Override
@@ -59,6 +65,8 @@ public class CalendarIntegration extends AppCompatActivity {
         CalendarManager manager = new CalendarManager();
         manager.loadAvaliableCalendarIDs(this);
 
+        FirebaseManager firebaseManager = new FirebaseManager();
+        firebaseManager.getUserFilterProfile(this::setFilterProfile);
 
         FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
         savedCalName = null;
@@ -97,8 +105,12 @@ public class CalendarIntegration extends AppCompatActivity {
                 else
                     savedEventIDs = fileManager.getEventIDs();
 
+                List<Test> calendarTests = fileManager.getLocalTests();
+                if(filterProfile != null)
+                    calendarTests = calendarTests.stream().filter(filterProfile::doesPassFilter).collect(Collectors.toList());
+
                 HashMap<String, Long> updatedEventIDs = manager.syncCalendarExport(
-                        fileManager.getLocalTests(),
+                        calendarTests,
                         this,
                         selectAdapter.getItem(calendarSelect.getSelectedItemPosition()),
                         savedEventIDs);
@@ -116,5 +128,7 @@ public class CalendarIntegration extends AppCompatActivity {
 
         }
 
-
+    public void setFilterProfile(FilterProfile filterProfile) {
+        this.filterProfile = filterProfile;
+    }
 }

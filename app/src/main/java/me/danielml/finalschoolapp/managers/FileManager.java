@@ -90,6 +90,7 @@ public class FileManager {
     public JSONObject getJSONObject(String fileName) throws FileNotFoundException, JSONException {
         File file = new File(internalSaveLocation, fileName+ ".json");
         if(!file.exists()) {
+            Log.d("SchoolTests", fileName + "JSON File doesn't exist!");
             return new JSONObject();
         }
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -167,7 +168,7 @@ public class FileManager {
     public boolean isAutoSyncingCalendar() {
         try {
             JSONObject obj = getJSONObject("preferences");
-            return obj.has("calendarAutoSync") && obj.getBoolean("calendarAutoSync");
+            return obj.getBoolean("calendarAutoSync");
         } catch (IOException | JSONException exception) {
             return false;
         }
@@ -187,7 +188,7 @@ public class FileManager {
     public boolean isSyncServiceEnabled() {
         try {
             JSONObject obj = getJSONObject("preferences");
-            return obj.has("syncService") && obj.getBoolean("syncService");
+            return obj.getBoolean("syncService");
         } catch (IOException | JSONException exception) {
             return false;
         }

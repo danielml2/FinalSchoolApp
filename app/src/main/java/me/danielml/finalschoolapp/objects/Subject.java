@@ -49,4 +49,8 @@ public enum Subject {
     Subject(String[] names) {
         this.names = names;
     }
+
+    public static Subject[] majors() {
+        return new Subject[]{Subject.PHYSICS, Subject.CS, Subject.BIOLOGY, Subject.CHEMISTRY, Subject.PHILOSOPHY, Subject.SAFROT, Subject.THEATER, Subject.ARABIC, Subject.GEOGRAPHY, Subject.PSYCHOLOGY, Subject.FILM};
+    }
 }

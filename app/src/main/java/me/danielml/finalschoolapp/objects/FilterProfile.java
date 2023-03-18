@@ -34,18 +34,18 @@ public class FilterProfile {
         return majorB;
     }
 
-    public boolean doesPassFilter(Test test, String[] majorNames) {
+    public boolean doesPassFilter(Test test) {
         boolean classNumCheck = test.getClassNums().contains(-1) || test.getClassNums().contains(classNum);
         if(!classNumCheck || test.getGradeNum() != gradeNum)
             return false;
 
-        boolean subjectCheck = Arrays.stream(majorNames).noneMatch(subjectName -> subjectName.equals(test.getSubject().getDefaultName()) || Subject.from(subjectName).equals(test.getSubject()));
-        if(subjectCheck)
+        boolean isNotaMajor = Arrays.stream(Subject.majors()).noneMatch(subject -> subject.equals(test.getSubject()));
+        if(!isNotaMajor && gradeNum < 12 && test.getSubject() == Subject.SAFROT)
+            isNotaMajor = true;
+        if(isNotaMajor)
             return true;
-        subjectCheck = test.getSubject().equals(majorA) || test.getSubject().equals(majorB) || test.getSubject().equals(Subject.MAGAMOT_A) || test.getSubject().equals(Subject.MAGAMOT_B);
 
-        return subjectCheck;
-
+        return test.getSubject().equals(majorA) || test.getSubject().equals(majorB) || test.getSubject().equals(Subject.MAGAMOT_A) || test.getSubject().equals(Subject.MAGAMOT_B);
     }
 
     @Override

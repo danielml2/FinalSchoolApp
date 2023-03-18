@@ -219,8 +219,10 @@ public class SettingsActivity extends AppCompatActivity {
                 selectedMajorA = Subject.from(majorsAdapterA.getItem(majorsASpinner.getSelectedItemPosition()));
                 selectedMajorB = Subject.from(majorsAdapterB.getItem(majorsBSpinner.getSelectedItemPosition()));
             }
+            FilterProfile newProfile = new FilterProfile(classNum, gradeNum, selectedMajorA, selectedMajorB);
 
-            firebaseManager.setUserFilterProfile(new FilterProfile(classNum, gradeNum, selectedMajorA, selectedMajorB));
+            SyncService.setFilterProfile(newProfile);
+            firebaseManager.setUserFilterProfile(newProfile);
         });
 
     }

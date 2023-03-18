@@ -27,6 +27,7 @@ import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.FilterProfile;
 import me.danielml.finalschoolapp.objects.Test;
+import me.danielml.finalschoolapp.service.SyncService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -140,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateTestsList() {
         firebaseManager.getUserFilterProfile((filterProfile) -> {
+            SyncService.setFilterProfile(filterProfile);
+
             tests.sort((test1, test2) -> {
                 if(test1.getDueDate() == test2.getDueDate())
                     return 0;
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 lastProfile = filterProfile;
                 tests.stream()
                         .filter(test -> System.currentTimeMillis() < test.getDueDate())
-                        .filter(test -> filterProfile.doesPassFilter(test, majorNames))
+                        .filter(filterProfile::doesPassFilter)
                         .forEach(test -> testsView.addView(buildView(test)));
             } else if(filterProfile == null && firstLoad) {
                 Log.d("SchoolTests","Profile doesn't exist, showing all tests");
