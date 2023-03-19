@@ -199,7 +199,7 @@ public class SyncService extends Service {
         endIntent.putExtra("endService",true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, endIntent, 0);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         return builder.setContentTitle("SchoolTests | Background Sync")
                 .setContentText("Last check: " + dateFormat.format(lastChecked) + "\n Next check: " + dateFormat.format(nextSync))
                 .addAction(R.mipmap.ic_launcher, "End Service", pendingIntent)
