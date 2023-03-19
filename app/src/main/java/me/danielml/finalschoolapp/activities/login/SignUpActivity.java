@@ -2,6 +2,7 @@ package me.danielml.finalschoolapp.activities.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.activities.MainActivity;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -47,6 +49,8 @@ public class SignUpActivity extends AppCompatActivity {
                     UserProfileChangeRequest updateName = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
                     newUser.updateProfile(updateName);
                     System.out.println("New user added: " + newUser.getEmail());
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
                 }, (exception) -> {
                     if(exception instanceof FirebaseAuthUserCollisionException)
                         Toast.makeText(this, "Email already exists! ", Toast.LENGTH_SHORT).show();

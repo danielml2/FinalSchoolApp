@@ -181,4 +181,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         updateTestsList();
     }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }
