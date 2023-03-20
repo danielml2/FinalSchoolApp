@@ -1,14 +1,21 @@
 package me.danielml.finalschoolapp.activities;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -35,6 +42,7 @@ public class CalendarIntegration extends AppCompatActivity {
 
     private Button updateButton;
     private Button jumpToSettingsBtn;
+    private ProgressBar progressBar;
 
     private FilterProfile filterProfile;
     private String savedCalName;
@@ -67,6 +75,7 @@ public class CalendarIntegration extends AppCompatActivity {
 
         FirebaseManager firebaseManager = new FirebaseManager();
         firebaseManager.getUserFilterProfile(this::setFilterProfile);
+        progressBar = findViewById(R.id.progressBarCalendar);
 
         FileManager fileManager = new FileManager(getApplicationContext().getFilesDir());
         savedCalName = null;
@@ -93,6 +102,8 @@ public class CalendarIntegration extends AppCompatActivity {
 
 
         updateButton.setOnClickListener((v) ->  {
+            progressBar.setVisibility(View.VISIBLE);
+            updateButton.setClickable(false);
             try {
                 long calID = fileManager.getCalendarID();
                 savedCalName = manager.getNameFromID(calID);
@@ -117,6 +128,8 @@ public class CalendarIntegration extends AppCompatActivity {
 
                 fileManager.saveEventIDs(updatedEventIDs);
 
+                successfulSyncDialog(selectedCalendar).show();
+
                 Log.d("SchoolTests", "New calendar ID: " + manager.getIDFromName(selectedCalendar));
                 Log.d("SchoolTests", "Saved test event IDs count: " + fileManager.getEventIDs().size());
 
@@ -124,11 +137,33 @@ public class CalendarIntegration extends AppCompatActivity {
                 Toast.makeText(this, "Failed to save or load event IDs in/from JSON", Toast.LENGTH_SHORT).show();
                 exception.printStackTrace();
             }
+            updateButton.setClickable(true);
+            progressBar.setVisibility(View.INVISIBLE);
         });
 
         }
 
     public void setFilterProfile(FilterProfile filterProfile) {
         this.filterProfile = filterProfile;
+    }
+
+    public AlertDialog successfulSyncDialog(String calendarName) {
+        return new AlertDialog.Builder(this)
+                .setTitle("Calendar Sync")
+                .setMessage(calendarName + " has successfully been synced with the tests list!")
+                .setPositiveButton("View Calendar", (dialog, id) -> {
+                    long time = System.currentTimeMillis();
+                    Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+
+                    builder.appendPath("time");
+                    ContentUris.appendId(builder, time);
+                    Intent openCalendar = new Intent(Intent.ACTION_VIEW);
+                    openCalendar.setData(builder.build());
+
+                    startActivity(openCalendar);
+                })
+                .setNegativeButton("Close", (dialog, id) -> {
+                    dialog.cancel();
+                }).create();
     }
 }
