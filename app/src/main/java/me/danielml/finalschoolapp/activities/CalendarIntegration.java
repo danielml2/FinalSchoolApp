@@ -1,6 +1,7 @@
 package me.danielml.finalschoolapp.activities;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.CalendarManager;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
@@ -165,5 +169,23 @@ public class CalendarIntegration extends AppCompatActivity {
                 .setNegativeButton("Close", (dialog, id) -> {
                     dialog.cancel();
                 }).create();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.signOutMenu) {
+            new FirebaseManager().signOut();
+            startActivity(new Intent(this, UserLoginActivity.class));
+        } else if(item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return true;
     }
 }

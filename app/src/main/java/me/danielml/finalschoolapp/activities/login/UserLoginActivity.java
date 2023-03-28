@@ -25,4 +25,9 @@ public class UserLoginActivity extends AppCompatActivity {
         signUp.setOnClickListener((v) -> startActivity(new Intent(this, SignUpActivity.class)));
 
     }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 }

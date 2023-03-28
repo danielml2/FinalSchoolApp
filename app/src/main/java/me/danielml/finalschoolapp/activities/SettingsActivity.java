@@ -2,6 +2,7 @@ package me.danielml.finalschoolapp.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -9,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.util.stream.IntStream;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.FilterProfile;
@@ -264,6 +268,24 @@ public class SettingsActivity extends AppCompatActivity {
         int readPermission = checkSelfPermission(Manifest.permission.READ_CALENDAR);
 
         return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.signOutMenu) {
+            firebaseManager.signOut();
+            startActivity(new Intent(this, UserLoginActivity.class));
+        } else if(item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return true;
     }
 
 

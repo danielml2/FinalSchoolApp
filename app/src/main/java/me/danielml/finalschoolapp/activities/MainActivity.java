@@ -1,5 +1,6 @@
 package me.danielml.finalschoolapp.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -7,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -23,6 +26,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import me.danielml.finalschoolapp.R;
+import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.FilterProfile;
@@ -180,6 +184,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateTestsList();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.signOutMenu) {
+            firebaseManager.signOut();
+            startActivity(new Intent(this, UserLoginActivity.class));
+        } else if(item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return true;
     }
 
     @Override
