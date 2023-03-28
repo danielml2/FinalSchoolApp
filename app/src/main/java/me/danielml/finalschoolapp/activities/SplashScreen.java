@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -15,11 +17,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import me.danielml.finalschoolapp.R;
-import me.danielml.finalschoolapp.service.SyncService;
-import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
-import me.danielml.finalschoolapp.managers.FileManager;
-import me.danielml.finalschoolapp.managers.FirebaseManager;
-import me.danielml.finalschoolapp.service.SyncService;
+import me.danielml.finalschoolapp.receivers.InternetConnectionReceiver;
 import me.danielml.finalschoolapp.activities.login.UserLoginActivity;
 import me.danielml.finalschoolapp.managers.FileManager;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
@@ -61,6 +59,9 @@ public class SplashScreen extends AppCompatActivity {
                 }
             }
         }, 0, 250);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(new InternetConnectionReceiver(), filter);
         syncDataAndSignIn();
     }
 
