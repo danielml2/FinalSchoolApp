@@ -94,7 +94,7 @@ public class FirebaseManager {
                 Log.d("FirebaseManager", "Got last updated successfully");
 
                 Log.d("FirebaseManager", "Took " + (System.currentTimeMillis() - time) + "ms");
-                callback.accept( lastUpdatedDB);
+                callback.accept(lastUpdatedDB);
             } else {
                 callback.accept(0L);
                 Log.e("FirebaseManager", "Couldn't get last updated value!");

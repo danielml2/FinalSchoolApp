@@ -29,7 +29,7 @@
         <receiver
             android:name=".receivers.InternetConnectionReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
         <receiver
             android:name=".service.ServiceKiller"
             android:enabled="true"
