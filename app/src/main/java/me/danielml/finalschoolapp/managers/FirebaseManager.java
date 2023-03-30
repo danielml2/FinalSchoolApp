@@ -1,9 +1,12 @@
 package me.danielml.finalschoolapp.managers;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -14,7 +17,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.RunAggregationQueryRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,12 +39,14 @@ public class FirebaseManager {
     private final FirebaseDatabase database;
     private final FirebaseFirestore firestore;
     private final FirebaseAuth authentication;
+    private final FirebaseStorage storage;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
 
     public FirebaseManager() {
         this.database = FirebaseDatabase.getInstance();
         this.firestore = FirebaseFirestore.getInstance();
+        this.storage = FirebaseStorage.getInstance();
         this.authentication = FirebaseAuth.getInstance();
     }
 
@@ -53,6 +62,7 @@ public class FirebaseManager {
         database.getReference()
                 .child("profiles")
                 .child(userID)
+                .child("filters")
                 .get()
                 .addOnCompleteListener((task) -> {
                     if(task.getResult().getValue() != null) {
@@ -83,6 +93,7 @@ public class FirebaseManager {
         database.getReference()
                 .child("profiles")
                 .child(userID)
+                .child("filters")
                 .setValue(filterProfile)
                 .addOnCompleteListener((task) -> {
                     System.out.println("User profile task: " + task.isSuccessful());
@@ -165,6 +176,40 @@ public class FirebaseManager {
                     stateManager.accept(DocumentState.FAILED);
                 });
         stateManager.accept(DocumentState.STARTED);
+    }
+
+    public void uploadImageForCurrentUser(@Nullable Bitmap photoBitmap, Consumer<Uri> successfulUploadCallback, Consumer<String> failedUpload) {
+        if(photoBitmap == null)
+            return;
+
+        String userID = getCurrentUser().getUid();
+
+        ByteArrayOutputStream compressedStream = new ByteArrayOutputStream();
+        photoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, compressedStream);
+        byte[] imageData = compressedStream.toByteArray();
+
+        StorageReference reference = storage.getReference();
+
+        reference.child("userPfps").child(userID)
+                .putBytes(imageData)
+                .addOnCompleteListener((task) -> {
+                    if(task.isSuccessful()) {
+                        task.getResult().getStorage().getDownloadUrl().addOnSuccessListener((url) -> {
+                            database.getReference()
+                                    .child("profiles")
+                                    .child(userID)
+                                    .child("pfpURL")
+                                    .setValue(url.toString())
+                                    .addOnSuccessListener((success) -> {
+                                        successfulUploadCallback.accept(url);
+                                    });
+                        })
+                        .addOnFailureListener((exception) -> failedUpload.accept("Failed updating the profile, try again"));
+                    } else {
+                        failedUpload.accept("Failed uploading image, try again.");
+                    }
+                });
+
     }
 
     public boolean isSignedIn() {

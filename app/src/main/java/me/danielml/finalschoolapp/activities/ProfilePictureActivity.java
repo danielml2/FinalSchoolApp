@@ -1,7 +1,5 @@
 package me.danielml.finalschoolapp.activities;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,10 +9,14 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -25,6 +27,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
 
     private Button takeCameraPhotoBtn, galleryPhotoBtn;
     private ImageView pfpView;
+    private ProgressBar uploadBar;
     private TextView usernameView;
 
     private FirebaseManager firebaseManager;
@@ -46,7 +49,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
 
         takeCameraPhotoBtn = findViewById(R.id.takeCameraPictureBtn);
         galleryPhotoBtn = findViewById(R.id.galleryUploadBtn);
-
+        uploadBar = findViewById(R.id.uploadProgressBar);
 
 
         takeCameraPhotoBtn.setOnClickListener((v) -> {
@@ -64,25 +67,39 @@ public class ProfilePictureActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && data != null) {
-
-            Bitmap photo;
+            galleryPhotoBtn.setEnabled(false);
+            takeCameraPhotoBtn.setEnabled(false);
+            uploadBar.setVisibility(View.VISIBLE);
+            Bitmap photo = null;
             switch(requestCode) {
                 case CAMERA_INTENT:
                     photo = (Bitmap) data.getExtras().get("data");
-                    pfpView.setImageBitmap(photo);
                     break;
                 case GALLERY_INTENT:
                     Uri imageURI = data.getData();
                     try {
                         ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), imageURI);
                         photo = ImageDecoder.decodeBitmap(source);
-                        pfpView.setImageBitmap(photo);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     break;
             }
-
+            firebaseManager.uploadImageForCurrentUser(photo, (imageURL) -> {
+                Toast.makeText(this, "Uploaded successfully!", Toast.LENGTH_SHORT).show();
+                pfpView.setImageURI(imageURL);
+                Picasso.get().load(imageURL).into(pfpView);
+                unlockScreen();
+            }, (failedReason) -> {
+                Toast.makeText(this, failedReason, Toast.LENGTH_LONG).show();
+                unlockScreen();
+            });
         }
+    }
+    
+    public void unlockScreen() {
+        galleryPhotoBtn.setEnabled(true);
+        takeCameraPhotoBtn.setEnabled(true);
+        uploadBar.setVisibility(View.INVISIBLE);
     }
 }
