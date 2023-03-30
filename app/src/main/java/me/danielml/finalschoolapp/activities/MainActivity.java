@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] majorNames;
     private FilterProfile lastProfile = null;
     private boolean firstLoad = true;
+    private TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d("SchoolTests", "Service is already running or is not enabled");
         }
+
+        tts = new TextToSpeech(getApplicationContext(), (code) -> {
+            if(code == TextToSpeech.SUCCESS)
+                tts.setLanguage(Locale.forLanguageTag("he-IL"));
+        });
     }
 
     public View buildView(Test test) {
@@ -117,11 +124,16 @@ public class MainActivity extends AppCompatActivity {
         String dateFormatted = dateFormat.format(test.asDate());
         dateFormatted = dateFormatted.substring(0, dateFormatted.length()-4);
 
-        titleView.setText("שכבה " + getGradeName(test.getGradeNum()) + " " + test.getType().getName() + " " + test.getSubject().getDefaultName());
+        String title = "שכבה " + getGradeName(test.getGradeNum()) + " " + test.getType().getName() + " " + test.getSubject().getDefaultName();
+        titleView.setText(title);
         detailsView.setText("לכיתות: " + classNumsText);
         dateView.setText(dateFormatted);
         creationText.setText(test.getCreationText());
 
+        final String ttsFormatted = dateFormatted;
+        v.setOnClickListener((view) -> {
+            tts.speak(title  + " ב "  + ttsFormatted, TextToSpeech.QUEUE_FLUSH, null);
+        });
         reportBtn.setOnClickListener((view) -> {
             Intent intent = new Intent(this, ReportActivity.class);
             intent.putExtra("reportedTest", test);
@@ -143,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 return "י'";
             case 11:
-                return "יא'";
+                return "י\"א";
             case 12:
-                return "יב'";
+                return "י\"ב";
         }
         return "";
     }

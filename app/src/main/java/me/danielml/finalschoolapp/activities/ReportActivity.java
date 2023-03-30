@@ -99,7 +99,6 @@ public class ReportActivity extends AppCompatActivity  {
 
     }
 
-    // I am not proud of having to copy-paste the method here, but there isn't really a viable solution structure-wise
     public void buildViewWithoutReportBtn(View v) {
         TextView titleView = v.findViewById(R.id.testTitleTV);
         TextView detailsView = v.findViewById(R.id.testDetailsTV);
