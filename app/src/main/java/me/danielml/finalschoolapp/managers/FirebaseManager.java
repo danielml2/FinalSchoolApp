@@ -153,7 +153,7 @@ public class FirebaseManager {
         });
     }
 
-    public void addReport(Test test, String issueType, String issueDetails, Consumer<DocumentState> stateManager) {
+    public void addReport(Test test, String issueType, String issueDetails, Runnable successCallback, Runnable failedCallback) {
 
         HashMap<String, Object> reportData = new HashMap<>();
         reportData.put("testID", getDatabaseIdFromTest(test));
@@ -168,14 +168,13 @@ public class FirebaseManager {
                 .set(reportData)
                 .addOnSuccessListener(nothing -> {
                     Log.d("FirebaseManager", "Successfully added the report to the database!");
-                    stateManager.accept(DocumentState.FINISHED);
+                    successCallback.run();
                 })
                 .addOnFailureListener(exception -> {
                     Log.e("FirebaseManager", "Failed to add report to database, caused by: " + exception.getCause());
                     exception.printStackTrace();
-                    stateManager.accept(DocumentState.FAILED);
+                    failedCallback.run();
                 });
-        stateManager.accept(DocumentState.STARTED);
     }
 
     public void getProfilePictureForCurrentUser(Consumer<Uri> profileURICallback) {

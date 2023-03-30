@@ -17,15 +17,10 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import me.danielml.finalschoolapp.R;
-import me.danielml.finalschoolapp.managers.DocumentState;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 import me.danielml.finalschoolapp.objects.Test;
 
@@ -84,16 +79,18 @@ public class ReportActivity extends AppCompatActivity  {
 
                 submitBtn.setClickable(false);
                 submitProgressBar.setVisibility(View.VISIBLE);
-                firebaseManager.addReport(test, dbIssueID, details, (state) -> {
-                    if(state == DocumentState.FINISHED) {
-                        finish();
-                        Toast.makeText(this, "דוח נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
-                    } else if(state == DocumentState.FAILED) {
-                        submitProgressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(this, "לא הצליח לשלוח דוח! בבקשה תנסו שוב", Toast.LENGTH_SHORT).show();
-                        submitBtn.setClickable(true);
-                    }
+                firebaseManager.addReport(test, dbIssueID, details, () -> {
+                    finish();
+                    Toast.makeText(this, "דוח נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
+                    submitBtn.setClickable(true);
+                    submitProgressBar.setVisibility(View.INVISIBLE);
+                }, () -> {
+                    submitProgressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(this, "לא הצליח לשלוח דוח! בבקשה תנסו שוב", Toast.LENGTH_SHORT).show();
+                    submitBtn.setClickable(true);
                 });
+            } else {
+                Toast.makeText(this, "Explanation needs to be at least 5 characters", Toast.LENGTH_SHORT).show();
             }
         });
 
