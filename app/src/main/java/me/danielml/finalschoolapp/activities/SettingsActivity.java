@@ -44,6 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button backBtn;
 
     private Button profileSettingsBtn;
+    private Button pfpTransferButton;
     private LinearLayout profileSettingsLayout;
     private Button appSettingsBtn;
     private LinearLayout appSettingsLayout;
@@ -180,6 +181,10 @@ public class SettingsActivity extends AppCompatActivity {
     public void setupProfileSettingsUI() {
         gradeNames = getResources().getStringArray(R.array.gradeNames);
         classNums = IntStream.of(getResources().getIntArray(R.array.classNums)).boxed().toArray(Integer[]::new);
+        pfpTransferButton = findViewById(R.id.pfpTransferBtn);
+        pfpTransferButton.setOnClickListener((v) -> {
+            startActivity(new Intent(this, ProfilePictureActivity.class));
+        });
 
         firebaseManager.getUserFilterProfile(this::updateUIWithProfile);
     }

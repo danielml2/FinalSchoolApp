@@ -56,7 +56,10 @@ public class ProfilePictureActivity extends AppCompatActivity {
 
         firebaseManager.getProfilePictureForCurrentUser((imageURL) -> {
             if(imageURL != null)
+            {
                 Picasso.get().load(imageURL).noFade().into(pfpView);
+                Toast.makeText(this, "Profile picture loaded!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         takeCameraPhotoBtn.setOnClickListener((v) -> {
