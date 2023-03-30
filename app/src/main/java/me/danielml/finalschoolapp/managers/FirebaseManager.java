@@ -178,6 +178,28 @@ public class FirebaseManager {
         stateManager.accept(DocumentState.STARTED);
     }
 
+    public void getProfilePictureForCurrentUser(Consumer<Uri> profileURICallback) {
+        String userID = getCurrentUser().getUid();
+
+        database.getReference()
+                .child("profiles")
+                .child(userID)
+                .child("pfpURL")
+                .get()
+                .addOnCompleteListener((task -> {
+                    if(task.isSuccessful()) {
+                        if(task.getResult().exists()) {
+                            String url = task.getResult().getValue(String.class);
+                            profileURICallback.accept(Uri.parse(url));
+                        }
+                        else
+                            profileURICallback.accept(null);
+                    }
+                    else
+                        profileURICallback.accept(null);
+                }));
+    }
+
     public void uploadImageForCurrentUser(@Nullable Bitmap photoBitmap, Consumer<Uri> successfulUploadCallback, Consumer<String> failedUpload) {
         if(photoBitmap == null)
             return;

@@ -51,6 +51,10 @@ public class ProfilePictureActivity extends AppCompatActivity {
         galleryPhotoBtn = findViewById(R.id.galleryUploadBtn);
         uploadBar = findViewById(R.id.uploadProgressBar);
 
+        firebaseManager.getProfilePictureForCurrentUser((imageURL) -> {
+            if(imageURL != null)
+                Picasso.get().load(imageURL).noFade().into(pfpView);
+        });
 
         takeCameraPhotoBtn.setOnClickListener((v) -> {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -88,7 +92,7 @@ public class ProfilePictureActivity extends AppCompatActivity {
             firebaseManager.uploadImageForCurrentUser(photo, (imageURL) -> {
                 Toast.makeText(this, "Uploaded successfully!", Toast.LENGTH_SHORT).show();
                 pfpView.setImageURI(imageURL);
-                Picasso.get().load(imageURL).into(pfpView);
+                Picasso.get().load(imageURL).noFade().into(pfpView);
                 unlockScreen();
             }, (failedReason) -> {
                 Toast.makeText(this, failedReason, Toast.LENGTH_LONG).show();
