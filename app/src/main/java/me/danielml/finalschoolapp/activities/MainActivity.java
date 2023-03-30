@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, UserLoginActivity.class));
         } else if(item.getItemId() == R.id.settingsMenu) {
             startActivity(new Intent(this, SettingsActivity.class));
+        } else if(item.getItemId() == R.id.changePfpMenu) {
+            startActivity(new Intent(this, ProfilePictureActivity.class));
         }
         return true;
     }

@@ -41,6 +41,10 @@ public class FirebaseManager {
         this.authentication = FirebaseAuth.getInstance();
     }
 
+    public FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
     public void getUserFilterProfile(Consumer<FilterProfile> profileCallback) {
         if(!isSignedIn())
             profileCallback.accept(FilterProfile.NULL_FALLBACK);
