@@ -1,20 +1,26 @@
 package me.danielml.finalschoolapp.activities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
@@ -101,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             if(code == TextToSpeech.SUCCESS)
                 tts.setLanguage(Locale.forLanguageTag("he-IL"));
         });
+        updateProfilePictureActionBar();
     }
 
     public View buildView(Test test) {
@@ -196,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         updateTestsList();
+        updateProfilePictureActionBar();
     }
 
     @Override
@@ -209,6 +217,31 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         MenuHandler.handleItemSelected(this, item);
         return true;
+    }
+
+    public void updateProfilePictureActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+
+        if(actionBar != null) {
+
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(R.layout.actionbar_layout);
+
+            View actionBarLayout = actionBar.getCustomView();
+
+            ImageView pfpView = actionBarLayout.findViewById(R.id.pfpActionbar);
+            TextView titleView = actionBarLayout.findViewById(R.id.actionBarTitle);
+
+            String title = "Welcome, " + firebaseManager.getCurrentUser().getDisplayName();
+            titleView.setTextDirection(View.TEXT_DIRECTION_LTR);
+            titleView.setText(title);
+
+            firebaseManager.getProfilePictureForCurrentUser((uri) -> {
+                if(uri != null)
+                    Picasso.get().load(uri).resize(125, 125).noFade().into(pfpView);
+            });
+        }
+
     }
 
     @Override

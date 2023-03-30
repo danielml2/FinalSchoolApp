@@ -47,10 +47,11 @@ public class SignUpActivity extends AppCompatActivity {
 
                 fbManager.signUp(email, password, (newUser) -> {
                     UserProfileChangeRequest updateName = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
-                    newUser.updateProfile(updateName);
-                    System.out.println("New user added: " + newUser.getEmail());
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
+                    newUser.updateProfile(updateName).addOnCompleteListener((task) -> {
+                        System.out.println("New user added: " + newUser.getEmail());
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                    });
                 }, (exception) -> {
                     if(exception instanceof FirebaseAuthUserCollisionException)
                         Toast.makeText(this, "Email already exists! ", Toast.LENGTH_SHORT).show();
