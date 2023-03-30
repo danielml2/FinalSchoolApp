@@ -279,12 +279,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         super.onOptionsItemSelected(item);
-        if(item.getItemId() == R.id.signOutMenu) {
-            firebaseManager.signOut();
-            startActivity(new Intent(this, UserLoginActivity.class));
-        } else if(item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
+        MenuHandler.handleItemSelected(this, item);
         return true;
     }
 
