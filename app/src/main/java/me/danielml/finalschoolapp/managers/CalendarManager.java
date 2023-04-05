@@ -136,7 +136,7 @@ public class CalendarManager {
         return values;
     }
 
-    private String getEventJSONName(Test test) {
+    public String getEventJSONName(Test test) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate()) + "_" + test.getGradeNum();
     }

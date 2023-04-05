@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 	private Button calendarMenu;
     private Button settingsBtn;
 
-    private String[] majorNames;
     private FilterProfile lastProfile = null;
     private boolean firstLoad = true;
     private TextToSpeech tts;
@@ -65,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         fileManager = new FileManager(getApplicationContext().getFilesDir());
         firebaseManager = new FirebaseManager();
-        majorNames = getResources().getStringArray(R.array.majorsNames);
 
         lastUpdatedText = findViewById(R.id.lastUpdatedText);
         testsView = findViewById(R.id.testsView);

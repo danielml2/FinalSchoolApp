@@ -29,19 +29,6 @@ public enum Subject {
         return OTHER;
     }
 
-    public String getEnumName() {
-        return this.name();
-    }
-
-    public String getCalendarIDName() {
-        StringBuilder newName = new StringBuilder();
-        for(char ch : this.name().toLowerCase().toCharArray()) {
-            if(ch < 'v' && ch != '_')
-                newName.append(ch);
-        }
-        return newName.toString();
-    }
-
     public String getDefaultName() {
         return this.names[0];
     }

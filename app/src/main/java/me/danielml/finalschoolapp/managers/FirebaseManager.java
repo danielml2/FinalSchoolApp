@@ -137,13 +137,9 @@ public class FirebaseManager {
                         TestType type = TestType.from(testSnapshot.child("type").getValue(String.class));
                         int gradeNum = testSnapshot.child("gradeNum").getValue(Integer.class);
                         long dueDate = testSnapshot.child("dueDate").getValue(Long.class);
-                        boolean manuallyCreated = testSnapshot.child("manuallyCreated").getValue(Boolean.class) != null && testSnapshot.child("manuallyCreated").getValue(Boolean.class);
                         String creationText = testSnapshot.child("creationText").getValue(String.class);
 
-                        Test test = new Test(subject,dueDate,type,gradeNum,classNums);
-                        test.setManuallyCreated(manuallyCreated);
-                        test.setCreationText(creationText);
-
+                        Test test = new Test(subject,dueDate,type,gradeNum,classNums, creationText);
                         tests.add(test);
                     });
 
@@ -261,7 +257,7 @@ public class FirebaseManager {
         authentication.signOut();
     }
 
-    private String getDatabaseIdFromTest(Test test) {
+    public String getDatabaseIdFromTest(Test test) {
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate());
     }
 }

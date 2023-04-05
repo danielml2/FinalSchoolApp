@@ -23,10 +23,6 @@ public enum TestType {
         return NONE;
     }
 
-    public String getEnumName() {
-        return this.name();
-    }
-
     public String getName() {
         return name;
     }

@@ -22,20 +22,14 @@ public class Test implements Serializable {
 
     private String creationText;
 
-    private boolean manuallyCreated;
 
-    public Test(Subject subject, long dueDate, TestType type, int gradeNum, ArrayList<Integer> classNums) {
+    public Test(Subject subject, long dueDate, TestType type, int gradeNum, ArrayList<Integer> classNums, String creationText) {
         this.subject = subject;
         this.dueDate = dueDate;
         this.type = type;
         this.gradeNum = gradeNum;
-        this.creationText = "NONE";
-        this.manuallyCreated = false;
+        this.creationText = creationText;
         this.classNums = classNums;
-    }
-
-    public void addClassNum(int classNum) {
-        this.classNums.add(classNum);
     }
 
     public Subject getSubject() {
@@ -63,21 +57,9 @@ public class Test implements Serializable {
     public int getGradeNum() {
         return gradeNum;
     }
-
-    public void setCreationText(String creationText) {
-        this.creationText = creationText;
-    }
-
+    
     public String getCreationText() {
         return creationText;
-    }
-
-    public boolean isManuallyCreated() {
-        return manuallyCreated;
-    }
-
-    public void setManuallyCreated(boolean manuallyCreated) {
-        this.manuallyCreated = manuallyCreated;
     }
 
     @Override
@@ -101,7 +83,6 @@ public class Test implements Serializable {
                      .put("subject", subject.name())
                      .put("testType", type.name())
                      .put("classNums", classNumsJSON())
-                     .put("manuallyCreated", manuallyCreated)
                      .put("creationText", creationText);
         } catch (JSONException e) {
             e.printStackTrace();

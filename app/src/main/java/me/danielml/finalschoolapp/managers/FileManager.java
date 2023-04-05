@@ -37,15 +37,15 @@ public class FileManager {
     }
 
     public void saveLastCheck(long lastCheck) throws JSONException, IOException {
-        JSONObject object = new JSONObject();
-        object.put("last_checked", lastCheck);
+        JSONObject object = getJSONObject("preferences");
+        object.put("service_last_checked", lastCheck);
 
-       writeJSON("syncSettings", object);
+       writeJSON("preferences", object);
     }
 
     public long getLastCheck() throws FileNotFoundException, JSONException {
-        JSONObject object = getJSONObject("syncSettings");
-        return object.has("last_checked") ? object.getLong("last_checked") : System.currentTimeMillis();
+        JSONObject object = getJSONObject("preferences");
+        return object.has("service_last_checked") ? object.getLong("service_last_checked") : System.currentTimeMillis();
     }
 
     public void saveDBDataLocally(long lastUpdated, List<Test> tests) throws JSONException, IOException {
@@ -107,16 +107,12 @@ public class FileManager {
             classNums.add((Integer) classNumJSON.get(i));
         }
 
-        Test test = new Test(Subject.from(json.getString("subject")),
+        return new Test(Subject.from(json.getString("subject")),
                             json.getLong("dueDate"),
                             TestType.from(json.getString("testType")),
                             json.getInt("gradeNum"),
-                            classNums);
-
-        test.setManuallyCreated(json.getBoolean("manuallyCreated"));
-        test.setCreationText(json.getString("creationText"));
-
-        return test;
+                            classNums,
+                            json.getString("creationText"));
     }
 
     public void saveEventIDs(HashMap<String, Long> testIDsToEventIDs) throws IOException {
