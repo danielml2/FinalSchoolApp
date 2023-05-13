@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private Button settingsBtn;
 
     private FilterProfile lastProfile = null;
-    private boolean firstLoad = true;
     private TextToSpeech tts;
 
     @Override
@@ -80,12 +79,8 @@ public class MainActivity extends AppCompatActivity {
             tests = fileManager.getLocalTests();
             lastUpdatedTime = fileManager.getLocalLastUpdated();
 
-            updateTestsList();
-
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.forLanguageTag("he-IL"));
-            SimpleDateFormat hourAndMinute = new SimpleDateFormat("HH:mm");
-            Date lastUpdated = new Date(lastUpdatedTime);
-            lastUpdatedText.setText("עודכן לאחרונה ב" + dateFormat.format(lastUpdated) + " בשעה " + hourAndMinute.format(lastUpdated));
+            updateLastUpdatedText();
+            updateTestsList(true);
 
         } catch (JSONException | IOException e) {
             e.printStackTrace();
@@ -167,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
-    public void updateTestsList() {
+    public void updateTestsList(boolean forceLoad) {
         firebaseManager.getUserFilterProfile((filterProfile) -> {
             SyncService.setFilterProfile(filterProfile);
 
@@ -178,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     return test1.getDueDate() < test2.getDueDate() ? -1 : 1;
             });
 
-            if(filterProfile != null && !filterProfile.equals(lastProfile))
+            if(filterProfile != null && (!filterProfile.equals(lastProfile) || forceLoad))
             {
                 testsView.removeAllViews();
                 Log.d("SchoolTests", "Refreshing tests list with new filter profile");
@@ -187,21 +182,46 @@ public class MainActivity extends AppCompatActivity {
                         .filter(test -> System.currentTimeMillis() < test.getDueDate())
                         .filter(filterProfile::doesPassFilter)
                         .forEach(test -> testsView.addView(buildView(test)));
-            } else if(filterProfile == null && firstLoad) {
+            } else if(filterProfile == null && forceLoad) {
                 Log.d("SchoolTests","Profile doesn't exist, showing all tests");
                 tests.stream()
                         .filter(test -> System.currentTimeMillis() < test.getDueDate())
                         .forEach(test -> testsView.addView(buildView(test)));
-                firstLoad = false;
             }
+            testsView.refreshDrawableState();
         });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        updateTestsList();
+        updateTestsList(false);
         updateProfilePictureActionBar();
+        firebaseManager.getLastUpdatedTime((newLastUpdate) -> {
+            Log.d("SchoolTests", "Got latest time?");
+            if(lastUpdatedTime < newLastUpdate) {
+                lastUpdatedTime = newLastUpdate;
+                updateLastUpdatedText();
+                firebaseManager.getCurrentTests((newTests) -> {
+                    tests = newTests;
+                    Log.d("SchoolTests", "New tests");
+                    updateTestsList(true);
+                    try {
+                        fileManager.saveDBDataLocally(newLastUpdate, newTests);
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+    }
+
+    public void updateLastUpdatedText() {
+        Log.d("SchoolTests", "Updating text!");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.forLanguageTag("he-IL"));
+        SimpleDateFormat hourAndMinute = new SimpleDateFormat("HH:mm");
+        Date lastUpdated = new Date(lastUpdatedTime);
+        lastUpdatedText.setText("עודכן לאחרונה ב" + dateFormat.format(lastUpdated) + " בשעה " + hourAndMinute.format(lastUpdated));
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import me.danielml.finalschoolapp.R;
 import me.danielml.finalschoolapp.activities.MainActivity;
+import me.danielml.finalschoolapp.activities.SplashScreen;
 import me.danielml.finalschoolapp.managers.FirebaseManager;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
                     UserProfileChangeRequest updateName = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
                     newUser.updateProfile(updateName).addOnCompleteListener((task) -> {
                         System.out.println("New user added: " + newUser.getEmail());
-                        Intent intent = new Intent(this, MainActivity.class);
+                        Intent intent = new Intent(this, SplashScreen.class);
                         startActivity(intent);
                     });
                 }, (exception) -> {
