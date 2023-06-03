@@ -39,6 +39,10 @@ public class CalendarManager {
         return availableCalendarIDs.keySet();
     }
 
+    /**
+     * Loads all the available calendars on the device to a map of its name and its calendar id
+     * @param context context to get the content resolver from.
+     */
     public void loadAvaliableCalendarIDs(Context context) {
         Cursor cur = null;
         ContentResolver resolver = context.getContentResolver();
@@ -54,6 +58,12 @@ public class CalendarManager {
 
     }
 
+    /**
+     * Checks if a calendar ID exists in the device
+     * @param calID Calendar ID
+     * @param context Context to load the calendar ids if it wasn't loaded yet
+     * @return If the calendar exists.
+     */
     public boolean doesCalendarExist(long calID, Context context) {
         if(availableCalendarIDs.isEmpty())
             loadAvaliableCalendarIDs(context);
@@ -61,11 +71,27 @@ public class CalendarManager {
         return availableCalendarIDs.containsValue(calID);
     }
 
+    /**
+     * Syncs the calendar with the current list of tests at that time
+     * @param tests The complete list of tests
+     * @param context Activity's context to use the content resolver.
+     * @param calName The calendar's name
+     * @param savedEventIDs The map of test IDs to the IDs of the calendar events representing them.
+     * @return A new updated map of all the tests IDs and calendar event IDs currently in the calendar.
+     */
     public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, String calName, HashMap<String, Long> savedEventIDs) {
         long calID = availableCalendarIDs.get(calName);
         return syncCalendarExport(tests, context, calID, savedEventIDs);
     }
 
+    /**
+     * Syncs the calendar with the current list of tests at that time
+     * @param tests The complete list of tests
+     * @param context Activity's context to use the content resolver.
+     * @param calID The calendar's ID
+     * @param savedEventIDs The map of test IDs to the IDs of the calendar events representing them.
+     * @return A new updated map of all the tests IDs and calendar event IDs currently in the calendar.
+     */
     public HashMap<String, Long> syncCalendarExport(List<Test> tests, Context context, long calID, HashMap<String, Long> savedEventIDs) {
 
         List<String> testKeys = tests.stream().map(this::getEventJSONName).collect(Collectors.toList());
@@ -101,8 +127,14 @@ public class CalendarManager {
         return testIDtoEventID;
     }
 
-
-        public long addEvent(Test test, long calID, Context context) {
+    /**
+     * Adds an event representing the test to the specified calendar.
+     * @param test Test to be added as an event
+     * @param calID Calendar ID to add the event to.
+     * @param context Context so we can access to the content resolver.
+     * @return The new event ID for the event added for the test.
+     */
+    public long addEvent(Test test, long calID, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
         System.out.println(test.getType().getName() + " " + test.getSubject().getDefaultName());
@@ -114,6 +146,12 @@ public class CalendarManager {
         return eventID;
     }
 
+    /**
+     * Removes an event representing the test to the specified calendar.
+     * @param eventID event to remove
+     * @param calID The calendar the event is on.
+     * @param context Context so we can access to the content resolver.
+     */
     public void removeEvent(long eventID, long calID, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
@@ -123,6 +161,12 @@ public class CalendarManager {
         Log.e("SchoolTests", "Deleted event with ID: " + eventID + " in calID" + calID + ", with " + deletedRowsCount + " deleted rows.");
     }
 
+    /**
+     * Maps an test to values for a calendar event.
+     * @param test The test to be mapped
+     * @param calID The calendar ID for the event
+     * @return The ContentValues object containing the event details.
+     */
     public ContentValues toEventValues(Test test, long calID) {
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
@@ -136,11 +180,21 @@ public class CalendarManager {
         return values;
     }
 
+    /**
+     * Gets the name for a test in the test IDs to event IDs JSON.
+     * @param test Test to have the name generated for
+     * @return The string representing the test's ID in the JSON.
+     */
     public String getEventJSONName(Test test) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd");
         return test.getSubject().name().toLowerCase() + "_" + test.getType().name().toLowerCase() + "_" + dateFormat.format(test.getDueDate()) + "_" + test.getGradeNum();
     }
 
+    /**
+     * Gets the a calendar's name from its calendar ID
+     * @param calID The calendar's ID
+     * @return The string representing the calendar name if it exists, if not returns null.
+     */
     public String getNameFromID(long calID) {
         Optional<Map.Entry<String, Long>> optional =
                 availableCalendarIDs.entrySet()
@@ -151,6 +205,11 @@ public class CalendarManager {
         return optional.map(Map.Entry::getKey).orElse(null);
     }
 
+    /**
+     * Gets the calendar's ID from its name.
+     * @param calName Calendar's Name
+     * @return The calendar ID representing it, if it doesn't exist returns -1.
+     */
     public long getIDFromName(String calName) {
        return availableCalendarIDs.getOrDefault(calName, -1L);
     }

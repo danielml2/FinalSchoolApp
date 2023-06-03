@@ -34,6 +34,11 @@ public class FilterProfile {
         return majorB;
     }
 
+    /**
+     * Checks a test if it passes the filters set in the filter profile.
+     * @param test Test to be checked
+     * @return If it passes the filters or not.
+     */
     public boolean doesPassFilter(Test test) {
         boolean classNumCheck = test.getClassNums().contains(-1) || test.getClassNums().contains(classNum);
         if(!classNumCheck || test.getGradeNum() != gradeNum)

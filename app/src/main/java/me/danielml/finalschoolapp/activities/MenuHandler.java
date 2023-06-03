@@ -10,6 +10,11 @@ import me.danielml.finalschoolapp.managers.FirebaseManager;
 
 public class MenuHandler {
 
+    /**
+     * Handles a menu item's logic when being selected & pressed on
+     * @param context context/activity the menu item was pressed on (To send to other activities)
+     * @param item The menu item clicked on.
+     */
     public static void handleItemSelected(Context context, MenuItem item) {
         if(item.getItemId() == R.id.signOutMenu) {
             new FirebaseManager().signOut();

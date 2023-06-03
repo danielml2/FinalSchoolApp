@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         signOutTemp = findViewById(R.id.signOutTemp);
         signOutTemp.setOnClickListener((v) -> {
             firebaseManager.signOut();
-            finish();
+            startActivity(new Intent(this, UserLoginActivity.class));
         });
 		calendarMenu = findViewById(R.id.calendarButton);
         settingsBtn = findViewById(R.id.settingsBtn);
@@ -103,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
         updateProfilePictureActionBar();
     }
 
+    /**
+     * Creates a view from test_layout.xml for the given test, to be inserted to the ListView
+     * @param test the test the view should show
+     * @return the created view
+     */
     public View buildView(Test test) {
         Log.d("SchoolTests", "Building view for: " + test);
         LinearLayout parentLayout = new LinearLayout(this);
@@ -144,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
         return parentLayout;
     }
 
+    /**
+     * Gets the hebrew grade name for the given grade number (7-12)
+     * @param gradeNum Grade number
+     * @return The grade's name in hebrew characters as a string.
+     */
     public String getGradeName(int gradeNum) {
         switch(gradeNum) {
             case 7:
@@ -162,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
+    /**
+     * Updates the ListView of tests given the latest user profile and data, if there's changes (unless it's force loaded)
+     * @param forceLoad Load/Reload the test list despite if there's changes to the profile or data.
+     */
     public void updateTestsList(boolean forceLoad) {
         firebaseManager.getUserFilterProfile((filterProfile) -> {
             SyncService.setFilterProfile(filterProfile);
@@ -216,6 +230,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the last updated TextView on the activity to the latest lastUpdatedTime value.
+     */
     public void updateLastUpdatedText() {
         Log.d("SchoolTests", "Updating text!");
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.forLanguageTag("he-IL"));
@@ -237,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Updates/loads the actionbar for the activity, fills it with the custom layout and the user's profile picture if he one set.
+     */
     public void updateProfilePictureActionBar() {
         ActionBar actionBar = getSupportActionBar();
 

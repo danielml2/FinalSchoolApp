@@ -75,6 +75,10 @@ public class Test implements Serializable {
         return "(Grade " + gradeNum + "): " + subject + " " + type + " at " + getDateFormatted() + " for " + classNums;
     }
 
+    /**
+     * Maps the test to a JSONObject.
+     * @return The JSONObject with the test's values in it.
+     */
     public JSONObject toJSON()  {
         try {
             return new JSONObject()

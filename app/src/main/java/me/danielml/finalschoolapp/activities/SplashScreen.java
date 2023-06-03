@@ -71,6 +71,10 @@ public class SplashScreen extends AppCompatActivity {
         super.onRestart();
     }
 
+    /**
+     * Checks if the user is logged in, if he isn't forwards him to the login page.
+     * If he is logged in, it checks for the latest data in the database and syncs it up & moves to MainActivity.
+     */
     public void syncDataAndSignIn() {
         if(!dbManager.isSignedIn())
             startActivity(new Intent(this, UserLoginActivity.class));

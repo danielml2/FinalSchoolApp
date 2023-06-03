@@ -28,6 +28,12 @@ public class FileManager {
         this.internalSaveLocation = internalSaveLocation;
     }
 
+    /**
+     * Gets the locally saved last updated time for the local data (From data.json)
+     * @return the locally saved last updated time for the data in Unix Time (milliseconds since 1970 on UTC time), If it doesn't exist or fails returns -1.
+     * @throws IOException If the file doesn't exist / fails to be read
+     * @throws JSONException If the file isn't able to be parsed correctly.
+     */
     public long getLocalLastUpdated() throws IOException, JSONException {
         JSONObject dataJSON = getJSONObject("data");
         if(dataJSON.has("last_updated"))
@@ -36,6 +42,12 @@ public class FileManager {
             return -1;
     }
 
+    /**
+     * Saves the last time the background sync service has checked the database for updates (Saves to preferences.json)
+     * @param lastCheck The last check time in Unix Time (milliseconds since 1970 on UTC time)
+     * @throws JSONException If parsing the existing file fails
+     * @throws IOException If the write operation fails
+     */
     public void saveLastCheck(long lastCheck) throws JSONException, IOException {
         JSONObject object = getJSONObject("preferences");
         object.put("service_last_checked", lastCheck);
@@ -43,11 +55,24 @@ public class FileManager {
        writeJSON("preferences", object);
     }
 
+    /**
+     * Gets the last time the background sync service has checked the database for updates. (from preferences.json)
+     * @return The last time checked, in Unix Time (milliseconds since 1970 on UTC time), If it isn't saved or fails, returns the current system time.
+     * @throws FileNotFoundException If it tries to read preferences.json when it doesn't exist
+     * @throws JSONException If the JSON parser fails to parse preferences.json
+     */
     public long getLastCheck() throws FileNotFoundException, JSONException {
         JSONObject object = getJSONObject("preferences");
         return object.has("service_last_checked") ? object.getLong("service_last_checked") : System.currentTimeMillis();
     }
 
+    /**
+     * Saves the test database data locally (Last updated time, list of tests) (Saved to data.json)
+     * @param lastUpdated Last time database was updated in Unix Time (milliseconds since 1970 on UTC time)
+     * @param tests The list of tests currently at the database
+     * @throws JSONException If any parsing of the JSON on the read/write fails
+     * @throws IOException If getting the current data.json file fails.
+     */
     public void saveDBDataLocally(long lastUpdated, List<Test> tests) throws JSONException, IOException {
         JSONObject object = getJSONObject("data");
 
@@ -62,6 +87,12 @@ public class FileManager {
         writeJSON("data", object);
     }
 
+    /**
+     * Gets the list of tests saved locally. (from data.json)
+     * @return Gets the list of tests, if the list doesn't exist, returns an empty list.
+     * @throws FileNotFoundException If reading the file fails
+     * @throws JSONException If parsing the JSON from the file fails.
+     */
     public List<Test> getLocalTests() throws FileNotFoundException, JSONException {
         JSONObject object = getJSONObject("data");
 
@@ -77,6 +108,12 @@ public class FileManager {
         return tests;
     }
 
+    /**
+     * Writes the JSONObject to a given JSON file in the internal save location
+     * @param fileName File to be saved (without file extension)
+     * @param jsonObject The json object to be saved
+     * @throws IOException If writing to the file fails.
+     */
     public void writeJSON(String fileName, JSONObject jsonObject) throws IOException {
         File file = new File(internalSaveLocation, fileName + ".json");
         if(!file.exists()) file.createNewFile();
@@ -86,7 +123,13 @@ public class FileManager {
         writer.flush();
     }
 
-
+    /**
+     * Gets the JSONObject from a given JSON file in the interal save location
+     * @param fileName File to load (without file extension)
+     * @return The JSONObject from the file, if the file exists otherwise returns an empty JSONObject.
+     * @throws FileNotFoundException If the file doesn't exist
+     * @throws JSONException If parsing the JSON from the file fails.
+     */
     public JSONObject getJSONObject(String fileName) throws FileNotFoundException, JSONException {
         File file = new File(internalSaveLocation, fileName+ ".json");
         if(!file.exists()) {
@@ -99,6 +142,12 @@ public class FileManager {
         return new JSONObject(jsonString);
     }
 
+    /**
+     * Creates a test from a given JSONObject json.
+     * @param json The JSONObject that represents the test
+     * @return The test from the JSON data.
+     * @throws JSONException If parsing any of the JSONObject to types fails.
+     */
     public Test fromJSON(JSONObject json) throws JSONException {
 
         ArrayList<Integer> classNums = new ArrayList<>();
@@ -115,6 +164,11 @@ public class FileManager {
                             json.getString("creationText"));
     }
 
+    /**
+     * Saves the test ID to calendar event IDs map to calendar_events.json
+     * @param testIDsToEventIDs The test id to calendar event id map to save.
+     * @throws IOException If writing to the file fails.
+     */
     public void saveEventIDs(HashMap<String, Long> testIDsToEventIDs) throws IOException {
 
         JSONObject jsonObject = new JSONObject();
@@ -130,6 +184,12 @@ public class FileManager {
         writeJSON("calendar_events", jsonObject);
     }
 
+    /**
+     * Gets the map of test ID to calendar event IDs from calendar_events.json
+     * @return The test id to calendar event id map, unless it fails or doesn't exist which then returns an empty map.
+     * @throws FileNotFoundException If the file doesn't exist
+     * @throws JSONException If parsing the JSON file fails.
+     */
     public HashMap<String, Long> getEventIDs() throws FileNotFoundException, JSONException {
         JSONObject object = getJSONObject("calendar_events");
 
@@ -151,16 +211,32 @@ public class FileManager {
         return testIDsToEventIDs;
     }
 
+    /**
+     * Save the selected calendar ID to preferences.json
+     * @param calID The Calendar ID
+     * @throws IOException If writing to the file fails
+     * @throws JSONException If parsing preferences.json fails.
+     */
     public void saveCalendarID(long calID) throws IOException, JSONException {
         JSONObject object = new JSONObject().put("calID", calID);
         writeJSON("preferences", object);
     }
 
+    /**
+     * Gets the calendar ID from preferences.json
+     * @return The calendar ID if it succeeds, -1 if it fails.
+     * @throws FileNotFoundException If the file doesn't exist
+     * @throws JSONException If parsing the file fails.
+     */
     public long getCalendarID() throws FileNotFoundException, JSONException {
         JSONObject obj = getJSONObject("preferences");
         return obj.has("calID") ? obj.getLong("calID") : -1;
     }
 
+    /**
+     * Gets the setting for auto syncing the calendar in the background (from preferences.json)
+     * @return The setting saved, if it fails loading it defaults to false.
+     */
     public boolean isAutoSyncingCalendar() {
         try {
             JSONObject obj = getJSONObject("preferences");
@@ -172,6 +248,10 @@ public class FileManager {
         }
     }
 
+    /**
+     * Saves the calendar auto sync in the background setting to preferences.json
+     * @param calendarAutoSync The background auto sync setting to save.
+     */
     public void saveCalendarAutoSync(boolean calendarAutoSync)  {
         try {
             JSONObject obj = getJSONObject("preferences");
@@ -183,6 +263,10 @@ public class FileManager {
         }
     }
 
+    /**
+     * Gets the setting for should the background sync service in the background or not.
+     * @return The setting value, defaults to false if fails.
+     */
     public boolean isSyncServiceEnabled() {
         try {
             JSONObject obj = getJSONObject("preferences");
@@ -194,6 +278,10 @@ public class FileManager {
         }
     }
 
+    /**
+     * Saves the setting for should the background sync service run in the background or not.
+     * @param syncServiceEnabled The setting value.
+     */
     public void saveSyncService(boolean syncServiceEnabled) {
         try {
             JSONObject obj = getJSONObject("preferences");

@@ -184,6 +184,10 @@ public class SyncService extends Service {
         return null;
     }
 
+    /**
+     * Generates the notification to show for the service
+     * @return The Notification object to show.
+     */
     public Notification getStaticNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "SchoolTests");
 
@@ -217,6 +221,9 @@ public class SyncService extends Service {
         stopForeground(true);
     }
 
+    /**
+     * Updates the service's notification.
+     */
     public void updateNotification() {
         NotificationManager manager = getSystemService(NotificationManager.class);
 

@@ -72,6 +72,9 @@ public class CalendarIntegration extends AppCompatActivity {
 
     }
 
+    /**
+     * Loads the calendar UI & calls the methods on CalendarManager that need the calendar permissions.
+     */
     public void loadCalendarUI() {
         Log.d("SchoolTests", "Calendar permission granted!");
         CalendarManager manager = new CalendarManager();
@@ -151,6 +154,11 @@ public class CalendarIntegration extends AppCompatActivity {
         this.filterProfile = filterProfile;
     }
 
+    /**
+     * Creates an alert dialog for when the calendar manager finishes syncing up the calendar to the user's test list
+     * @param calendarName Name of the calendar chosen
+     * @return The alert dialog.
+     */
     public AlertDialog successfulSyncDialog(String calendarName) {
         return new AlertDialog.Builder(this)
                 .setTitle("Calendar Sync")

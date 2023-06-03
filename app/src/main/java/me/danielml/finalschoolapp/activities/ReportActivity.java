@@ -96,6 +96,10 @@ public class ReportActivity extends AppCompatActivity  {
 
     }
 
+    /**
+     * Fills the view for the test being reported on based on the reported test. (Modified from MainActivity#buildView)
+     * @param v The view with the test_layout.xml layout on.
+     */
     public void buildViewWithoutReportBtn(View v) {
         TextView titleView = v.findViewById(R.id.testTitleTV);
         TextView detailsView = v.findViewById(R.id.testDetailsTV);
@@ -118,6 +122,11 @@ public class ReportActivity extends AppCompatActivity  {
         creationText.setText(test.getCreationText());
     }
 
+    /**
+     * Gets the hebrew grade name for the given grade number (7-12) (Taken from MainActivity)
+     * @param gradeNum Grade number
+     * @return The grade's name in hebrew characters as a string.
+     */
     public String getGradeName(int gradeNum) {
         switch(gradeNum) {
             case 7:
